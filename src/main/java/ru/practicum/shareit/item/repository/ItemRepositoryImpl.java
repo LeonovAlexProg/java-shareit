@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.repository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.exceptions.ItemExistsException;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class ItemRepositoryImpl implements ItemRepository {
@@ -20,8 +22,10 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Item createItem(Item item) {
-        if (items.containsKey(item.getId()))
+        if (items.containsKey(item.getId())) {
+            log.debug("Item id {} already exists", item.getId());
             throw new ItemExistsException(String.format("Item id %d already exists", item.getId()));
+        }
 
         id++;
         item.setId(id);
@@ -31,8 +35,10 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Item readItem(int itemId) {
-        if (!items.containsKey(itemId))
+        if (!items.containsKey(itemId)) {
+            log.debug("Item id {} not found", itemId);
             throw new ItemNotFoundException(String.format("Item id - %d not found", itemId));
+        }
 
         return items.get(itemId);
     }

@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService {
     private void validateUserEmail(User user) {
         if (getAllUsers().stream().anyMatch(curUser -> !Objects.equals(curUser.getId(), user.getId()) &&
                 curUser.getEmail().equals(user.getEmail()))) {
+            log.debug("User with {} email already exists", user.getEmail());
             throw new EmailExistsException(String.format("User with %s email already exists", user.getEmail()));
         }
     }
