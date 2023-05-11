@@ -15,6 +15,7 @@ import java.util.List;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+
     @Override
     public Item addItem(Item item) {
         validateUserExist(item);

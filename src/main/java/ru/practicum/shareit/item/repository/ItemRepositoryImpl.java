@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 public class ItemRepositoryImpl implements ItemRepository {
     private final Map<Integer, Item> items;
     private int id = 0;
+
     @Override
     public Item createItem(Item item) {
         if (items.containsKey(item.getId()))
