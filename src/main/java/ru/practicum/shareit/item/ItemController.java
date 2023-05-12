@@ -14,9 +14,6 @@ import ru.practicum.shareit.item.service.ItemService;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -25,35 +22,34 @@ public class ItemController {
     private final ItemMapper mapper;
 
     @PostMapping
-    public Item addItem(@RequestHeader("X-Sharer-User-Id") int userId,
+    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") int userId,
                         @Validated({ItemIdConstraint.class,
                                 ItemCreateConstraint.class}) @RequestBody ItemDto itemDto) {
         Item item = mapper.map(userId, itemDto);
-        return itemService.addItem(item);
+        return mapper.map(itemService.addItem(item));
     }
 
     @PatchMapping("/{itemId}")
-    public Item updateItem(@PathVariable int itemId,
+    public ItemDto updateItem(@PathVariable int itemId,
                            @RequestHeader("X-Sharer-User-Id") int userId,
                            @Valid @RequestBody ItemDto itemDto) {
         Item item = mapper.map(itemId, userId, itemDto);
-        return itemService.updateItem(item);
+        return mapper.map(itemService.updateItem(item));
     }
 
     @GetMapping("/{itemId}")
-    public Item getItem(@PathVariable int itemId,
+    public ItemDto getItem(@PathVariable int itemId,
                         @RequestHeader("X-Sharer-User-Id") int userId) {
-        return itemService.getItem(itemId);
+        return mapper.map(itemService.getItem(itemId));
     }
 
     @GetMapping
-    public List<Item> getUserItems(@RequestHeader("X-Sharer-User-Id") int userId) {
-        return itemService.getUserItems(userId);
+    public List<ItemDto> getUserItems(@RequestHeader("X-Sharer-User-Id") int userId) {
+        return mapper.map(itemService.getUserItems(userId));
     }
 
     @GetMapping("/search")
-    public List<Item> searchItem(@RequestParam(name = "text") String text) {
-        return itemService.findItem(text);
+    public List<ItemDto> searchItem(@RequestParam(name = "text") String text) {
+        return mapper.map(itemService.findItem(text));
     }
-
 }

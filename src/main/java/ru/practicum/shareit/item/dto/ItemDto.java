@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import ru.practicum.shareit.item.constraints.ItemCreateConstraint;
 import ru.practicum.shareit.item.constraints.ItemIdConstraint;
@@ -10,8 +10,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 
-@RequiredArgsConstructor
 @Data
+@Builder
 public class ItemDto {
     @Null(groups = ItemIdConstraint.class)
     private Integer id;

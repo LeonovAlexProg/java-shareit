@@ -4,6 +4,9 @@ import org.springframework.stereotype.Component;
 
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class ItemMapper {
     public Item map(int userId, ItemDto itemDto) {
@@ -23,5 +26,18 @@ public class ItemMapper {
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
                 .build();
+    }
+
+    public ItemDto map(Item item) {
+        return ItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .build();
+    }
+
+    public List<ItemDto> map(List<Item> items) {
+        return items.stream().map(this::map).collect(Collectors.toList());
     }
 }

@@ -13,9 +13,6 @@ import ru.practicum.shareit.user.constraints.UserIdConstraint;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
@@ -24,26 +21,26 @@ public class UserController {
     private final UserMapper mapper;
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public List<UserDto> getAllUsers() {
+        return mapper.map(userService.getAllUsers());
     }
 
     @PostMapping()
-    public User createNewUser(@Validated({UserIdConstraint.class, UserCreateConstraint.class}) @RequestBody UserDto userDto) {
+    public UserDto createNewUser(@Validated({UserIdConstraint.class, UserCreateConstraint.class}) @RequestBody UserDto userDto) {
         User user = mapper.map(userDto);
-        return userService.createUser(user);
+        return mapper.map(userService.createUser(user));
     }
 
     @GetMapping("/{userId}")
-    public User getUser(@PathVariable int userId) {
-        return userService.getUser(userId);
+    public UserDto getUser(@PathVariable int userId) {
+        return mapper.map(userService.getUser(userId));
     }
 
     @PatchMapping("/{userId}")
-    public User patchUser(@PathVariable int userId,
+    public UserDto patchUser(@PathVariable int userId,
                           @Validated(UserIdConstraint.class) @Valid @RequestBody UserDto userDto) {
         User user = mapper.map(userId, userDto);
-        return userService.patchUser(user);
+        return mapper.map(userService.patchUser(user));
     }
 
     @DeleteMapping("/{userId}")
