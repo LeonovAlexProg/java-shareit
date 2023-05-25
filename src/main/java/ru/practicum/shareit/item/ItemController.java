@@ -23,33 +23,33 @@ public class ItemController {
 
     @PostMapping
     public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") int userId,
-                        @Validated({ItemIdConstraint.class,
+                        @Valid @Validated({ItemIdConstraint.class,
                                 ItemCreateConstraint.class}) @RequestBody ItemDto itemDto) {
-        Item item = mapper.map(userId, itemDto);
-        return mapper.map(itemService.addItem(item));
+        itemDto.setUserId((long) userId);
+        return itemService.addItem(itemDto);
     }
 
-    @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@PathVariable int itemId,
-                           @RequestHeader("X-Sharer-User-Id") int userId,
-                           @Valid @RequestBody ItemDto itemDto) {
-        Item item = mapper.map(itemId, userId, itemDto);
-        return mapper.map(itemService.updateItem(item));
-    }
-
-    @GetMapping("/{itemId}")
-    public ItemDto getItem(@PathVariable int itemId,
-                        @RequestHeader("X-Sharer-User-Id") int userId) {
-        return mapper.map(itemService.getItem(itemId));
-    }
-
-    @GetMapping
-    public List<ItemDto> getUserItems(@RequestHeader("X-Sharer-User-Id") int userId) {
-        return mapper.map(itemService.getUserItems(userId));
-    }
-
-    @GetMapping("/search")
-    public List<ItemDto> searchItem(@RequestParam(name = "text") String text) {
-        return mapper.map(itemService.findItem(text));
-    }
+//    @PatchMapping("/{itemId}")
+//    public ItemDto updateItem(@PathVariable int itemId,
+//                           @RequestHeader("X-Sharer-User-Id") int userId,
+//                           @Valid @RequestBody ItemDto itemDto) {
+//        Item item = mapper.map(itemId, userId, itemDto);
+//        return mapper.map(itemService.updateItem(item));
+//    }
+//
+//    @GetMapping("/{itemId}")
+//    public ItemDto getItem(@PathVariable int itemId,
+//                        @RequestHeader("X-Sharer-User-Id") int userId) {
+//        return mapper.map(itemService.getItem(itemId));
+//    }
+//
+//    @GetMapping
+//    public List<ItemDto> getUserItems(@RequestHeader("X-Sharer-User-Id") int userId) {
+//        return mapper.map(itemService.getUserItems(userId));
+//    }
+//
+//    @GetMapping("/search")
+//    public List<ItemDto> searchItem(@RequestParam(name = "text") String text) {
+//        return mapper.map(itemService.findItem(text));
+//    }
 }

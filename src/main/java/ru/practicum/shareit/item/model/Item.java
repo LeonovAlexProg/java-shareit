@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class Item {
     @Id
     @Column(name = "id")
-    private Integer id;
+    private Long id;
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     private User user;
     @Column(name = "name")
