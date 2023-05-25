@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    email VARCHAR(30),
+    name VARCHAR(30),
+    CONSTRAINT UQ_USER_EMAIL UNIQUE (email)
+);
+
+CREATE TABLE IF NOT EXISTS items (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    owner_id BIGINT,
+    name VARCHAR(30),
+    description VARCHAR(255),
+    is_available BOOLEAN,
+    CONSTRAINT fk_owner_id_to_user
+    FOREIGN KEY (owner_id) REFERENCES users (id)
+);
