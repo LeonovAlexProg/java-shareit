@@ -13,7 +13,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.item.exceptions.AccessRestrictedException;
+import ru.practicum.shareit.item.exceptions.ItemAccessRestrictedException;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new ItemNotFoundException(String.format("Item id %d not found", itemDto.getId())));
 
         if (!itemDto.getUserId().equals(trgItem.getUser().getId())) {
-            throw new AccessRestrictedException(
+            throw new ItemAccessRestrictedException(
                     String.format("User id %d have not access to patch Item id %d", srcItem.getUser().getId(), srcItem.getId())
             );
         }
