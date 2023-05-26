@@ -10,6 +10,8 @@ import ru.practicum.shareit.item.model.Item;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -36,5 +38,9 @@ public class ItemDto {
                 .description(item.getDescription())
                 .available(item.getIsAvailable())
                 .build();
+    }
+
+    public static List<ItemDto> listOf(List<Item> items) {
+        return items.stream().map(ItemDto::of).collect(Collectors.toList());
     }
 }

@@ -1,7 +1,9 @@
 package ru.practicum.shareit.user.model;
 
-import lombok.*;
-import org.springframework.data.repository.cdi.Eager;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.persistence.*;

@@ -14,7 +14,6 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @Service
