@@ -1,10 +1,14 @@
 package ru.practicum.shareit.booking.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.constraints.BookingCreateConstraint;
 import ru.practicum.shareit.booking.constraints.BookingIdConstraint;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -14,7 +18,7 @@ import java.time.LocalDateTime;
 
 @Builder
 @Data
-public class BookingDto {
+public class BookingResponseDto {
     @Null(groups = BookingIdConstraint.class)
     Long id;
 
@@ -30,23 +34,20 @@ public class BookingDto {
     String status;
 
     @Null(groups = BookingCreateConstraint.class)
-    Long bookerId;
+    User booker;
+
 
     @NotNull(groups = BookingCreateConstraint.class)
-    Long itemId;
+    Item item;
 
-    @Null(groups = BookingCreateConstraint.class)
-    String itemName;
-
-    public static BookingDto of(Booking booking) {
-        return BookingDto.builder()
+    public static BookingResponseDto of(Booking booking) {
+        return BookingResponseDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
                 .status(booking.getStatus().toString())
-                .bookerId(builder().bookerId)
-                .itemId(booking.getItem().getId())
-                .itemName(booking.getItem().getName())
+                .booker(booking.getUser())
+                .item(booking.getItem())
                 .build();
     }
 }

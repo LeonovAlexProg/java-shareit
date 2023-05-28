@@ -1,7 +1,10 @@
 package ru.practicum.shareit.booking.service;
 
-import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 
 public interface BookingService {
-    BookingDto bookItem(BookingDto bookingDto);
+    BookingResponseDto bookItem(BookingRequestDto bookingDto);
+
+    BookingResponseDto acceptOrDeclineBooking(long userId, long bookingId, boolean approved);
 }

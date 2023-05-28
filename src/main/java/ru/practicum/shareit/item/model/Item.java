@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +22,9 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+
+    //убрал FetchType.LAZY т.к. падал Jackson маппер в контроллере из-за прокси юзера
+    @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "owner_id")
     private User user;
     @Column(name = "name")

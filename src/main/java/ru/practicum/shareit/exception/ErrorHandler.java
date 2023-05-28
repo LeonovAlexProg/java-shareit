@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.booking.exceptions.AcceptBookingException;
+import ru.practicum.shareit.booking.exceptions.BookingNotFoundException;
 import ru.practicum.shareit.booking.exceptions.BookingValidationException;
 import ru.practicum.shareit.booking.exceptions.ItemBookingException;
 import ru.practicum.shareit.item.exceptions.ItemExistsException;
@@ -63,7 +65,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse bookingValidationException(final BookingValidationException e) {
+    public ErrorResponse bookingValidationHandler(final BookingValidationException e) {
         log.warn(e.getMessage());
         return new ErrorResponse(
                 e.getMessage()
@@ -72,7 +74,25 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse itemBookingException(final ItemBookingException e) {
+    public ErrorResponse itemBookingHandler(final ItemBookingException e) {
+        log.warn(e.getMessage());
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse bookingNotFoundHandler(final BookingNotFoundException e) {
+        log.warn(e.getMessage());
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse AcceptBookingHandler(final AcceptBookingException e) {
         log.warn(e.getMessage());
         return new ErrorResponse(
                 e.getMessage()
