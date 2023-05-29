@@ -9,6 +9,7 @@ import ru.practicum.shareit.booking.service.BookingService;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/bookings")
@@ -28,5 +29,23 @@ public class BookingController {
                                                      @PathVariable long bookingId,
                                                      @RequestParam boolean approved) {
         return bookingService.acceptOrDeclineBooking(userId, bookingId, approved);
+    }
+
+    @GetMapping("/{bookingId}")
+    public BookingResponseDto getOneBooking(@RequestHeader(name = "X-Sharer-User-id") long userId,
+                                            @PathVariable long bookingId) {
+        return bookingService.getBooking(userId, bookingId);
+    }
+
+    @GetMapping()
+    public List<BookingResponseDto> getAllUserBookings(@RequestHeader(name = "X-Sharer-User-id") long userId,
+                                                       @RequestParam(required = false, defaultValue = "ALL") String state) {
+        return bookingService.getUserBookings(userId, state, false);
+    }
+
+    @GetMapping("/owner")
+    public List<BookingResponseDto> getAllOwnerBookings(@RequestHeader(name = "X-Sharer-User-id") long userId,
+                                                       @RequestParam(required = false, defaultValue = "ALL") String state) {
+        return bookingService.getUserBookings(userId, state, true);
     }
 }

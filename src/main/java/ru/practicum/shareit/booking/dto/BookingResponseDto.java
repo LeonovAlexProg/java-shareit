@@ -15,6 +15,8 @@ import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 @Data
@@ -49,5 +51,9 @@ public class BookingResponseDto {
                 .booker(booking.getUser())
                 .item(booking.getItem())
                 .build();
+    }
+
+    public static List<BookingResponseDto> listOf(List<Booking> bookings) {
+        return bookings.stream().map(BookingResponseDto::of).collect(Collectors.toList());
     }
 }

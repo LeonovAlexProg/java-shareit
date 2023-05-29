@@ -91,7 +91,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse AcceptBookingHandler(final AcceptBookingException e) {
         log.warn(e.getMessage());
         return new ErrorResponse(
