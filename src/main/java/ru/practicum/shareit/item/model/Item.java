@@ -1,11 +1,9 @@
 package ru.practicum.shareit.item.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Reference;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.model.User;
 
@@ -34,12 +32,12 @@ public class Item {
     @Column(name = "is_available")
     private Boolean isAvailable;
 
-    public static Item of(ItemDto itemDto) {
+    public static Item of(ItemDto itemUserDto) {
         return Item.builder()
-                .id(itemDto.getId())
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .isAvailable(itemDto.getAvailable())
+                .id(itemUserDto.getId())
+                .name(itemUserDto.getName())
+                .description(itemUserDto.getDescription())
+                .isAvailable(itemUserDto.getAvailable())
                 .build();
     }
 }

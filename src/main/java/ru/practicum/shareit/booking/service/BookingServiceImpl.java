@@ -43,12 +43,8 @@ public class BookingServiceImpl implements BookingService {
         Item item = itemRepository.findById(bookingDto.getItemId())
                 .orElseThrow(() -> new ItemNotFoundException(String.format("Item id %d not found", bookingDto.getItemId())));
 
-//        boolean isBooked = bookingRepository.findAllByUser(bookingDto.getBookerId()).stream()
-//                .anyMatch(curBooking -> curBooking.getUser().equals(user) &&
-//                        curBooking.getItem().equals(item) &&
-//                        curBooking.getItem().getIsAvailable().equals(Boolean.FALSE));
-//        if (isBooked)
-//            throw new BookingNotFoundException(String.format("Item id %d already booked", item.getId()));
+        if (item.getUser().equals(user))
+            throw new BookingNotFoundException(String.format("Item id %d already booked", item.getId()));
 
         if (item.getIsAvailable()) {
             Booking booking = Booking.builder()
@@ -66,7 +62,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingResponseDto acceptOrDeclineBooking(long userId, long bookingId, boolean approved) {
+    public BookingResponseDto acceptOrDeclineBooking(long userId, long bookingId, boolean isApproved) {
         if (!userRepository.existsById(userId))
             throw new UserNotFoundException(String.format("User id %d not found", userId));
 
@@ -77,9 +73,11 @@ public class BookingServiceImpl implements BookingService {
             throw new BookingNotFoundException(String.format("User id %d has no rights to approve booking id %d", userId, bookingId));
 
         if (booking.getStatus().equals(Booking.Status.WAITING) && booking.getItem().getIsAvailable()) {
-            booking.setStatus(Booking.Status.APPROVED);
-            booking.getItem().setIsAvailable(Boolean.TRUE);
-
+            if (isApproved)
+                booking.setStatus(Booking.Status.APPROVED);
+//            booking.getItem().setIsAvailable(Boolean.TRUE);
+            else
+                booking.setStatus(Booking.Status.REJECTED);
             bookingRepository.save(booking);
         } else {
             throw new AcceptBookingException(String.format("Unable to approve booking"));

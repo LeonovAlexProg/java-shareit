@@ -53,9 +53,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItem(Long itemId) {
-        return ItemDto.of(itemRepository.findById(itemId)
-                .orElseThrow(() -> new ItemNotFoundException(String.format("Item id %d not found", itemId))));
+    public ItemDto getItem(Long itemId, Long userId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new ItemNotFoundException(String.format("Item id %d not found", itemId)));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User id %d not found", userId)));
+
+        return ItemDto.of(item);
     }
 
     @Override

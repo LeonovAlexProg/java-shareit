@@ -19,24 +19,24 @@ public class ItemController {
 
     @PostMapping
     public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                         @Validated({ItemIdConstraint.class, ItemCreateConstraint.class}) @Valid @RequestBody ItemDto itemDto) {
-        itemDto.setUserId(userId);
-        return itemService.addItem(itemDto);
+                               @Validated({ItemIdConstraint.class, ItemCreateConstraint.class}) @Valid @RequestBody ItemDto itemUserDto) {
+        itemUserDto.setUserId(userId);
+        return itemService.addItem(itemUserDto);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@PathVariable long itemId,
-                           @RequestHeader("X-Sharer-User-Id") long userId,
-                           @Valid @RequestBody ItemDto itemDto) {
-        itemDto.setId(itemId);
-        itemDto.setUserId(userId);
-        return itemService.updateItem(itemDto);
+                              @RequestHeader("X-Sharer-User-Id") long userId,
+                              @Valid @RequestBody ItemDto itemUserDto) {
+        itemUserDto.setId(itemId);
+        itemUserDto.setUserId(userId);
+        return itemService.updateItem(itemUserDto);
     }
 
     @GetMapping("/{itemId}")
     public ItemDto getItem(@PathVariable long itemId,
-                        @RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemService.getItem(itemId);
+                               @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.getItem(itemId, userId);
     }
 
     @GetMapping
