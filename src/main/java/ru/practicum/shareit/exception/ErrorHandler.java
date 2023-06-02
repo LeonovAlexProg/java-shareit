@@ -14,6 +14,7 @@ import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.user.exceptions.EmailExistsException;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.exceptions.ItemAccessRestrictedException;
+import ru.practicum.shareit.item.exceptions.CommentValidationException;
 
 @RestControllerAdvice
 @Slf4j
@@ -93,6 +94,15 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse AcceptBookingHandler(final AcceptBookingException e) {
+        log.warn(e.getMessage());
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse CommentValidationHandler(final CommentValidationException e) {
         log.warn(e.getMessage());
         return new ErrorResponse(
                 e.getMessage()

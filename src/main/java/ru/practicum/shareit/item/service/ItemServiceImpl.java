@@ -9,9 +9,14 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.item.dto.CommentRequestDto;
+import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.item.exceptions.CommentValidationException;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
@@ -32,6 +37,8 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
 
     private final BookingRepository bookingRepository;
+
+    private final CommentRepository commentRepository;
 
     @Override
     public ItemDto addItem(ItemDto itemDto) {
@@ -97,6 +104,29 @@ public class ItemServiceImpl implements ItemService {
 
         return ItemDto.listOf(itemRepository.findItemsLike(text)
                 .orElseThrow(() -> new ItemNotFoundException(String.format("No items containing %s were found", text))));
+    }
+
+    @Override
+    public CommentResponseDto postComment(Long userId, Long itemId, CommentRequestDto commentRequestDto) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new ItemNotFoundException(String.format("Item id %d not found", itemId)));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User id %d not found", userId)));
+
+        if (itemRepository.itemWasRentedByUser(itemId, userId, LocalDateTime.now())) {
+            Comment comment = Comment.builder()
+                    .item(item)
+                    .user(user)
+                    .text(commentRequestDto.getText())
+                    .created(LocalDateTime.now())
+                    .build();
+
+            comment = commentRepository.save(comment);
+
+            return CommentResponseDto.of(comment);
+        }
+
+        throw new CommentValidationException(String.format("User id %d can not post comments on item id %d", userId, itemId));
     }
 
     private void setLastAndNextBookingsForItem(ItemDto itemDto) {

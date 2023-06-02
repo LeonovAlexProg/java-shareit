@@ -27,3 +27,15 @@ CREATE TABLE IF NOT EXISTS bookings (
     CONSTRAINT fk_item_id_to_item
     FOREIGN KEY (item_id) REFERENCES items (id)
 );
+
+CREATE TABLE IF NOT EXISTS comments (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    text VARCHAR(255),
+    item_id BIGINT,
+    author_id BIGINT,
+    created DATETIME,
+    CONSTRAINT fk_comments_item_id_to_item
+    FOREIGN KEY (item_id) REFERENCES items (id),
+    CONSTRAINT fk_comments_user_id_to_user
+    FOREIGN KEY (author_id) REFERENCES users (id)
+);
