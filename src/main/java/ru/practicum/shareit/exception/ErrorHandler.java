@@ -93,7 +93,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse AcceptBookingHandler(final AcceptBookingException e) {
+    public ErrorResponse acceptBookingHandler(final AcceptBookingException e) {
         log.warn(e.getMessage());
         return new ErrorResponse(
                 e.getMessage()
@@ -102,7 +102,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse CommentValidationHandler(final CommentValidationException e) {
+    public ErrorResponse commentValidationHandler(final CommentValidationException e) {
         log.warn(e.getMessage());
         return new ErrorResponse(
                 e.getMessage()

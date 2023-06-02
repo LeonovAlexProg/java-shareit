@@ -20,6 +20,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "join i.user as u " +
             "where u.id = ?1 and b.id = ?2")
     boolean isOwner(long ownerId, long bookingId);
+
     @Query(value = "select b from Booking as b " +
             "join b.user as u " +
             "where u.id = ?1 " +
@@ -82,7 +83,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByItemUserIdAndStatusIsOrderByStartDesc(long userId, Booking.Status status);
 
-    Booking findFirstBookingByItemIdAndEndIsBeforeOrderByEndDesc(long itemId, LocalDateTime dateTime);
+    @Query(value = "select * from bookings as b " +
+            "left join items as i on b.item_id = i.id " +
+            "where i.id = ? and b.start_time < now() and b.status = 'APPROVED' " +
+            "order by b.end_time desc " +
+            "limit 1", nativeQuery = true)
+    Booking findLastBooking(long itemId);
 
-    Booking findFirstBookingByItemIdAndStartIsAfterOrderByStartAsc(long itemId, LocalDateTime dateTime);
+    @Query(value = "select * from bookings as b " +
+            "left join items as i on b.item_id = i.id " +
+            "where i.id = ? and b.start_time > now() and b.status = 'APPROVED' " +
+            "order by b.start_time asc " +
+            "limit 1", nativeQuery = true)
+    Booking findNextBooking(long itemId);
 }

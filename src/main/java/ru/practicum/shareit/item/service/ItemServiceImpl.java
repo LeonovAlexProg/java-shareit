@@ -132,11 +132,10 @@ public class ItemServiceImpl implements ItemService {
 
     // не понимаю почему падает последний тест в постмане((
     private void setLastAndNextBookingsForItem(ItemDto itemDto) {
-        LocalDateTime localDateTime = LocalDateTime.now();
         Booking lastBooking = bookingRepository
-                .findFirstBookingByItemIdAndEndIsBeforeOrderByEndDesc(itemDto.getId(), localDateTime);
+                .findLastBooking(itemDto.getId());
         Booking nextBooking = bookingRepository
-                .findFirstBookingByItemIdAndStartIsAfterOrderByStartAsc(itemDto.getId(), localDateTime);
+                .findNextBooking(itemDto.getId());
 
         if (lastBooking != null) {
             itemDto.setLastBooking(BookingShortDto.of(lastBooking));
@@ -154,12 +153,12 @@ public class ItemServiceImpl implements ItemService {
        BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
     }
 
-    private static String[] getNullPropertyNames (Object source) {
+    private static String[] getNullPropertyNames(Object source) {
         final BeanWrapper src = new BeanWrapperImpl(source);
         java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
         Set<String> emptyNames = new HashSet<String>();
-        for(java.beans.PropertyDescriptor pd : pds) {
+        for (java.beans.PropertyDescriptor pd : pds) {
             Object srcValue = src.getPropertyValue(pd.getName());
             if (srcValue == null) emptyNames.add(pd.getName());
         }
