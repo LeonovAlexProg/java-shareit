@@ -34,6 +34,8 @@ public class ItemDto {
     private BookingShortDto lastBooking;
     @Nullable
     private BookingShortDto nextBooking;
+    @Nullable
+    List<CommentResponseDto> comments;
 
     public static ItemDto of(Item item) {
         return ItemDto.builder()

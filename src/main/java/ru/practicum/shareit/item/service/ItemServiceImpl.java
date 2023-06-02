@@ -71,16 +71,17 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new ItemNotFoundException(String.format("Item id %d not found", itemId)));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User id %d not found", userId)));
+        List<Comment> comments = commentRepository.findAllByItemId(itemId);
+
+        ItemDto itemDto = ItemDto.of(item);
 
         if (item.getUser().equals(user)) {
-            ItemDto itemDto = ItemDto.of(item);
-
             setLastAndNextBookingsForItem(itemDto);
-
-            return itemDto;
         }
 
-        return ItemDto.of(item);
+        itemDto.setComments(CommentResponseDto.listOf(comments));
+
+        return itemDto;
     }
 
     @Override
@@ -129,6 +130,7 @@ public class ItemServiceImpl implements ItemService {
         throw new CommentValidationException(String.format("User id %d can not post comments on item id %d", userId, itemId));
     }
 
+    // не понимаю почему падает последний тест в постмане((
     private void setLastAndNextBookingsForItem(ItemDto itemDto) {
         LocalDateTime localDateTime = LocalDateTime.now();
         Booking lastBooking = bookingRepository
@@ -136,10 +138,12 @@ public class ItemServiceImpl implements ItemService {
         Booking nextBooking = bookingRepository
                 .findFirstBookingByItemIdAndStartIsAfterOrderByStartAsc(itemDto.getId(), localDateTime);
 
-        if (lastBooking != null)
+        if (lastBooking != null) {
             itemDto.setLastBooking(BookingShortDto.of(lastBooking));
-        if (nextBooking != null)
-            itemDto.setNextBooking(BookingShortDto.of(nextBooking));
+            if (nextBooking != null) {
+                itemDto.setNextBooking(BookingShortDto.of(nextBooking));
+            }
+        }
     }
 
     private void setLastAndNextBookingsForItemList(List<ItemDto> itemDtoList) {

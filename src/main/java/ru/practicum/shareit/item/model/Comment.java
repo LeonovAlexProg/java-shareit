@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -30,7 +29,7 @@ public class Comment {
     Item item;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "author_id")
     User user;
 
     @Column(name = "created")
