@@ -21,7 +21,7 @@ public class Item {
     @Column(name = "id")
     private Long id;
 
-    //убрал FetchType.LAZY т.к. падал Jackson маппер в контроллере из-за прокси юзера
+    //убрал FetchType.LAZY т.к. падал Jackson мапер в контроллере из-за прокси юзера
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "owner_id")
     private User user;

@@ -41,7 +41,7 @@ public class Booking {
     Item item;
 
     public enum Status {
-        APPROVED, REJECTED, WAITING;
+        APPROVED, REJECTED, WAITING
 
     }
 }

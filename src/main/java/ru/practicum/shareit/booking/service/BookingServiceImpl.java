@@ -1,28 +1,23 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.exceptions.AcceptBookingException;
-import ru.practicum.shareit.booking.exceptions.BookingValidationException;
 import ru.practicum.shareit.booking.exceptions.BookingNotFoundException;
+import ru.practicum.shareit.booking.exceptions.BookingValidationException;
+import ru.practicum.shareit.booking.exceptions.ItemBookingException;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.booking.exceptions.ItemBookingException;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.item.model.Item;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -68,19 +63,22 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException(String.format("Booking id %d not found", bookingId)));
+        Item item = booking.getItem();
 
         if (userId != booking.getItem().getUser().getId())
             throw new BookingNotFoundException(String.format("User id %d has no rights to approve booking id %d", userId, bookingId));
 
         if (booking.getStatus().equals(Booking.Status.WAITING) && booking.getItem().getIsAvailable()) {
-            if (isApproved)
+            if (isApproved) {
                 booking.setStatus(Booking.Status.APPROVED);
-//            booking.getItem().setIsAvailable(Boolean.TRUE);
-            else
+//              booking.getItem().setIsAvailable(Boolean.TRUE);
+            }
+            else {
                 booking.setStatus(Booking.Status.REJECTED);
+            }
             bookingRepository.save(booking);
         } else {
-            throw new AcceptBookingException(String.format("Unable to approve booking"));
+            throw new AcceptBookingException("Unable to approve booking");
         }
 
         return BookingResponseDto.of(booking);

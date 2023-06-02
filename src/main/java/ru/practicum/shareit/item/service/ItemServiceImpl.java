@@ -6,6 +6,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dto.BookingShortDto;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.item.model.Item;
@@ -15,6 +18,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.item.exceptions.ItemAccessRestrictedException;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +30,8 @@ import java.util.Set;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+
+    private final BookingRepository bookingRepository;
 
     @Override
     public ItemDto addItem(ItemDto itemDto) {
@@ -59,14 +65,26 @@ public class ItemServiceImpl implements ItemService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User id %d not found", userId)));
 
+        if (item.getUser().equals(user)) {
+            ItemDto itemDto = ItemDto.of(item);
+
+            setLastAndNextBookingsForItem(itemDto);
+
+            return itemDto;
+        }
+
         return ItemDto.of(item);
     }
 
     @Override
     public List<ItemDto> getUserItems(Long userId) {
         if (userRepository.existsById(userId)) {
-            return ItemDto.listOf(itemRepository.findItemsByUserId(userId)
+            List<ItemDto> itemDtoList = ItemDto.listOf(itemRepository.findItemsByUserId(userId)
                     .orElseThrow(() -> new ItemNotFoundException(String.format("User id %d have no any items", userId))));
+
+            setLastAndNextBookingsForItemList(itemDtoList);
+
+            return itemDtoList;
         } else {
             throw new UserNotFoundException(String.format("User id %d not found", userId));
         }
@@ -79,6 +97,23 @@ public class ItemServiceImpl implements ItemService {
 
         return ItemDto.listOf(itemRepository.findItemsLike(text)
                 .orElseThrow(() -> new ItemNotFoundException(String.format("No items containing %s were found", text))));
+    }
+
+    private void setLastAndNextBookingsForItem(ItemDto itemDto) {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        Booking lastBooking = bookingRepository
+                .findFirstBookingByItemIdAndEndIsBeforeOrderByEndDesc(itemDto.getId(), localDateTime);
+        Booking nextBooking = bookingRepository
+                .findFirstBookingByItemIdAndStartIsAfterOrderByStartAsc(itemDto.getId(), localDateTime);
+
+        if (lastBooking != null)
+            itemDto.setLastBooking(BookingShortDto.of(lastBooking));
+        if (nextBooking != null)
+            itemDto.setNextBooking(BookingShortDto.of(nextBooking));
+    }
+
+    private void setLastAndNextBookingsForItemList(List<ItemDto> itemDtoList) {
+        itemDtoList.forEach(this::setLastAndNextBookingsForItem);
     }
 
     private static void copyNonNullProperties(Object src, Object target) {

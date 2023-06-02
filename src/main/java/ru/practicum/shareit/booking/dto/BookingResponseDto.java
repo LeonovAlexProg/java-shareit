@@ -1,14 +1,12 @@
 package ru.practicum.shareit.booking.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.constraints.BookingCreateConstraint;
 import ru.practicum.shareit.booking.constraints.BookingIdConstraint;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -36,11 +34,11 @@ public class BookingResponseDto {
     String status;
 
     @Null(groups = BookingCreateConstraint.class)
-    User booker;
+    UserDto booker;
 
 
     @NotNull(groups = BookingCreateConstraint.class)
-    Item item;
+    ItemDto item;
 
     public static BookingResponseDto of(Booking booking) {
         return BookingResponseDto.builder()
@@ -48,8 +46,8 @@ public class BookingResponseDto {
                 .start(booking.getStart())
                 .end(booking.getEnd())
                 .status(booking.getStatus().toString())
-                .booker(booking.getUser())
-                .item(booking.getItem())
+                .booker(UserDto.of(booking.getUser()))
+                .item(ItemDto.of(booking.getItem()))
                 .build();
     }
 
