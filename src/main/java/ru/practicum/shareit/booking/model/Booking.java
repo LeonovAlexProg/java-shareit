@@ -20,25 +20,25 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long id;
+    private Long id;
 
     @Column(name = "start_time")
-    LocalDateTime start;
+    private LocalDateTime start;
 
     @Column(name = "end_time")
-    LocalDateTime end;
+    private LocalDateTime end;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    Status status;
+    private Status status;
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    User user;
+    private User user;
 
     @OneToOne
     @JoinColumn(name = "item_id")
-    Item item;
+    private Item item;
 
     public enum Status {
         APPROVED, REJECTED, WAITING

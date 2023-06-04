@@ -13,13 +13,13 @@ import java.util.stream.Collectors;
 @Data
 public class CommentResponseDto {
     @NotNull
-    Long id;
+    private Long id;
     @NotNull
-    String text;
+    private String text;
     @NotNull
-    String authorName;
+    private String authorName;
     @NotNull
-    LocalDateTime created;
+    private LocalDateTime created;
 
     public static CommentResponseDto of(Comment comment) {
         return CommentResponseDto.builder()

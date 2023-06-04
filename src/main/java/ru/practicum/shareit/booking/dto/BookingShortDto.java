@@ -7,8 +7,8 @@ import ru.practicum.shareit.booking.model.Booking;
 @Data
 @Builder
 public class BookingShortDto {
-    Long id;
-    Long bookerId;
+    private Long id;
+    private Long bookerId;
 
     public static BookingShortDto of(Booking booking) {
         return BookingShortDto.builder()

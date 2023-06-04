@@ -20,25 +20,25 @@ import java.util.stream.Collectors;
 @Data
 public class BookingResponseDto {
     @Null(groups = BookingIdConstraint.class)
-    Long id;
+    private Long id;
 
     @NotNull(groups = BookingCreateConstraint.class)
     @FutureOrPresent(groups = BookingCreateConstraint.class)
-    LocalDateTime start;
+    private LocalDateTime start;
 
     @NotNull(groups = BookingCreateConstraint.class)
     @Future(groups = BookingCreateConstraint.class)
-    LocalDateTime end;
+    private LocalDateTime end;
 
     @Null(groups = BookingCreateConstraint.class)
-    String status;
+    private String status;
 
     @Null(groups = BookingCreateConstraint.class)
-    UserDto booker;
+    private UserDto booker;
 
 
     @NotNull(groups = BookingCreateConstraint.class)
-    ItemDto item;
+    private ItemDto item;
 
     public static BookingResponseDto of(Booking booking) {
         return BookingResponseDto.builder()

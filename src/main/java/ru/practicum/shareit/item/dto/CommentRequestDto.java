@@ -13,5 +13,5 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class CommentRequestDto {
     @NotBlank
-    String text;
+    private String text;
 }
