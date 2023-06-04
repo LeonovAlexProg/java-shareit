@@ -130,7 +130,6 @@ public class ItemServiceImpl implements ItemService {
         throw new CommentValidationException(String.format("User id %d can not post comments on item id %d", userId, itemId));
     }
 
-    // не понимаю почему падает последний тест в постмане((
     private void setLastAndNextBookingsForItem(ItemDto itemDto) {
         Booking lastBooking = bookingRepository
                 .findLastBooking(itemDto.getId());
