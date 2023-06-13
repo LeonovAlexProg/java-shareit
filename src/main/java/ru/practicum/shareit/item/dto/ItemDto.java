@@ -35,16 +35,24 @@ public class ItemDto {
     @Nullable
     private BookingShortDto nextBooking;
     @Nullable
-    List<CommentResponseDto> comments;
+    private List<CommentResponseDto> comments;
+    @Nullable
+    private Long requestId;
 
     public static ItemDto of(Item item) {
-        return ItemDto.builder()
+        ItemDto dto = ItemDto.builder()
                 .id(item.getId())
                 .userId(item.getUser().getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getIsAvailable())
                 .build();
+
+        if (item.getRequest() != null) {
+            dto.setRequestId(item.getRequest().getId());
+        }
+
+        return dto;
     }
 
     public static List<ItemDto> listOf(List<Item> items) {

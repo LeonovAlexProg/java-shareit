@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 @Builder
 public class ItemResponseDto {
-    private Integer itemId;
+    private Long id;
 
     private String name;
 
-    private String ownerId;
+    private Long ownerId;
 }

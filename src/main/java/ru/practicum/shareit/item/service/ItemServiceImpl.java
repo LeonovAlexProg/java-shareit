@@ -18,6 +18,9 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.exception.ItemRequestNotFoundException;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -35,6 +38,7 @@ import java.util.Set;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final ItemRequestRepository requestRepository;
 
     private final BookingRepository bookingRepository;
 
@@ -44,7 +48,14 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto addItem(ItemDto itemDto) {
         User user = userRepository.findById(itemDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(String.format("User id %d not found", itemDto.getUserId())));
-        Item item = new Item(itemDto.getId(), user, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable());
+        Item item = new Item(itemDto.getId(), user, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable(), null);
+
+        if (itemDto.getRequestId() != null && requestRepository.existsById(itemDto.getRequestId())) {
+            ItemRequest request = requestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new ItemRequestNotFoundException(String.format("Request id %d not found", itemDto.getRequestId())));
+
+            item.setRequest(request);
+        }
 
         return ItemDto.of(itemRepository.save(item));
     }

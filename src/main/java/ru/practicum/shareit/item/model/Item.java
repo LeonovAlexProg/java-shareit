@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -21,7 +22,6 @@ public class Item {
     @Column(name = "id")
     private Long id;
 
-    //убрал FetchType.LAZY т.к. падал Jackson мапер в контроллере из-за прокси юзера
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(name = "owner_id")
     private User user;
@@ -31,6 +31,9 @@ public class Item {
     private String description;
     @Column(name = "is_available")
     private Boolean isAvailable;
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    private ItemRequest request;
 
     public static Item of(ItemDto itemUserDto) {
         return Item.builder()

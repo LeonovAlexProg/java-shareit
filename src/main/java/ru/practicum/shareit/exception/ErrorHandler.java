@@ -11,6 +11,8 @@ import ru.practicum.shareit.booking.exceptions.BookingValidationException;
 import ru.practicum.shareit.booking.exceptions.ItemBookingException;
 import ru.practicum.shareit.item.exceptions.ItemExistsException;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.request.exception.ItemRequestNotFoundException;
+import ru.practicum.shareit.request.exception.PaginationDataException;
 import ru.practicum.shareit.user.exceptions.EmailExistsException;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.exceptions.ItemAccessRestrictedException;
@@ -103,6 +105,24 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse commentValidationHandler(final CommentValidationException e) {
+        log.warn(e.getMessage());
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse paginationDataHandler(final PaginationDataException e) {
+        log.warn(e.getMessage());
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse ItemRequestNotFoundHandler(final ItemRequestNotFoundException e) {
         log.warn(e.getMessage());
         return new ErrorResponse(
                 e.getMessage()
