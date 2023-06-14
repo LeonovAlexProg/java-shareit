@@ -8,21 +8,23 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.util.Assert;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.exceptions.AcceptBookingException;
 import ru.practicum.shareit.booking.exceptions.BookingNotFoundException;
+import ru.practicum.shareit.booking.exceptions.BookingValidationException;
 import ru.practicum.shareit.booking.exceptions.ItemBookingException;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.request.dto.ItemResponseDto;
+import ru.practicum.shareit.request.exception.PaginationDataException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -227,22 +229,126 @@ class BookingServiceImplUnitTest {
                 .when(userRepository.findById(owner.getId()))
                 .thenReturn(Optional.ofNullable(owner));
         Mockito
-                .when(bookingRepository.save(booking))
-                .thenReturn(bookingSaved);
+                .when(bookingRepository.findById(bookingSaved.getId()))
+                .thenReturn(Optional.ofNullable(bookingSaved));
         Mockito
                 .when(bookingRepository.isBooker(booker.getId(), bookingSaved.getId()))
-                .thenReturn(true);
+                .thenReturn(false);
         Mockito
-                .when(bookingRepository.isOwner(owner.getId(), bookingSaved.getId()))
+                .when(bookingRepository.isBooker(owner.getId(), bookingSaved.getId()))
                 .thenReturn(true);
 
         expectedResponse = BookingResponseDto.of(bookingSaved);
         actualResponse = bookingService.getBooking(owner.getId(), bookingSaved.getId());
 
         Assertions.assertEquals(expectedResponse, actualResponse);
+
+        Mockito
+                .when(bookingRepository.isOwner(booker.getId(), bookingSaved.getId()))
+                .thenReturn(true);
+
+        actualResponse = bookingService.getBooking(booker.getId(), bookingSaved.getId());
+
+        Assertions.assertEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    void getBookingUnavailable() {
+        String expectedMessage; //"No booking id %d found for user %d"
+        String actualMessage;
+        Exception exception;
+
+        Mockito
+                .when(userRepository.findById(booker.getId()))
+                .thenReturn(Optional.ofNullable(booker));
+        Mockito
+                .when(userRepository.findById(owner.getId()))
+                .thenReturn(Optional.ofNullable(owner));
+        Mockito
+                .when(bookingRepository.findById(bookingSaved.getId()))
+                .thenReturn(Optional.ofNullable(bookingSaved));
+
+        Mockito
+                .when(bookingRepository.isBooker(booker.getId(), bookingSaved.getId()))
+                .thenReturn(false);
+        Mockito
+                .when(bookingRepository.isBooker(owner.getId(), bookingSaved.getId()))
+                .thenReturn(false);
+
+        expectedMessage = String.format("No booking id %d found for user %d", bookingSaved.getId(), owner.getId());
+        exception = Assertions.assertThrows(BookingNotFoundException.class,
+                () -> bookingService.getBooking(owner.getId(), bookingSaved.getId()));
+        actualMessage = exception.getMessage();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+
+        expectedMessage = String.format("No booking id %d found for user %d", bookingSaved.getId(), booker.getId());
+        exception = Assertions.assertThrows(BookingNotFoundException.class,
+                () -> bookingService.getBooking(booker.getId(), bookingSaved.getId()));
+        actualMessage = exception.getMessage();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
     }
 
     @Test
     void getUserBookings() {
+        List<BookingResponseDto> expectedList;
+        List<BookingResponseDto> actualList;
+
+        Mockito
+                .when(userRepository.existsById(owner.getId()))
+                .thenReturn(true);
+        Mockito
+                .when(bookingRepository.findAllByOwner(owner.getId(), Pageable.unpaged()))
+                .thenReturn(List.of(bookingSaved));
+
+        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        actualList = bookingService.getUserBookings(owner.getId(), "ALL", true, null, null);
+
+        Assertions.assertEquals(expectedList, actualList);
+
+        Mockito
+                .when(userRepository.existsById(booker.getId()))
+                .thenReturn(true);
+        Mockito
+                .when(bookingRepository.findAllByUser(booker.getId(), Pageable.unpaged()))
+                .thenReturn(List.of(bookingSaved));
+
+        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        actualList = bookingService.getUserBookings(booker.getId(), "ALL", false, null, null);
+
+        Assertions.assertEquals(expectedList, actualList);
+    }
+
+    @Test
+    void getUserBookingsInvalidPagination() {
+        String expectedMessage = "Invalid pagination data";
+        String actualMessage;
+
+        Mockito
+                .when(userRepository.existsById(owner.getId()))
+                .thenReturn(true);
+
+        Exception exception = Assertions.assertThrows(PaginationDataException.class,
+                () -> bookingService.getUserBookings(owner.getId(), "ALL", true, -1, -1));
+        actualMessage = exception.getMessage();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+    }
+
+    @Test
+    void getUserBookingsUnsupportedStatus() {
+        String expectedMessage = "Unknown state: UNSUPPORTED_STATUS";
+        String actualMessage;
+
+        Mockito
+                .when(userRepository.existsById(owner.getId()))
+                .thenReturn(true);
+
+        Exception exception = Assertions.assertThrows(BookingValidationException.class,
+                () -> bookingService.getUserBookings(owner.getId(), "TEST_STATE", true, null, null));
+        actualMessage = exception.getMessage();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
     }
 }
