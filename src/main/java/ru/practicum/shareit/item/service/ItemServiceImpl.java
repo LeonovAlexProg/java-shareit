@@ -50,7 +50,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto addItem(ItemDto itemDto) {
         User user = userRepository.findById(itemDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(String.format("User id %d not found", itemDto.getUserId())));
-        Item item = new Item(itemDto.getId(), user, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable(), null);
+        Item item = new Item(null, user, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable(), null);
 
         if (itemDto.getRequestId() != null && requestRepository.existsById(itemDto.getRequestId())) {
             ItemRequest request = requestRepository.findById(itemDto.getRequestId())
