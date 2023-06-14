@@ -1,13 +1,13 @@
 package ru.practicum.shareit.request.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.dto.ItemResponseDto;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,5 +35,5 @@ public class ItemRequest {
     private User user;
 
     @OneToMany(mappedBy = "request")
-    private List<Item> items;
+    private List<Item> items = new ArrayList<>();
 }

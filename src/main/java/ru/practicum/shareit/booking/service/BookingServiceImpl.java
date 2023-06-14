@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
@@ -13,6 +15,7 @@ import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.exception.PaginationDataException;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -98,49 +101,62 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingResponseDto> getUserBookings(long userId, String state, boolean isOwner) {
+    public List<BookingResponseDto> getUserBookings(long userId, String state, boolean isOwner, Integer from, Integer size) {
         if (!userRepository.existsById(userId))
             throw new UserNotFoundException(String.format("User id %d not found", userId));
 
         LocalDateTime now = LocalDateTime.now();
         List<Booking> bookings;
+        Pageable pageable;
+
+        if (from != null && size != null) {
+            if (from < 0 || size < 0) {
+                throw new PaginationDataException("Invalid pagination data");
+            }
+
+            int page = from / size;
+            pageable = PageRequest.of(page, size);
+        } else {
+            pageable = Pageable.unpaged();
+        }
+
 
         switch (state) {
             case "ALL":
                 if (isOwner)
-                    bookings = bookingRepository.findAllByOwner(userId);
+                    bookings = bookingRepository.findAllByOwner(userId, pageable);
                 else
-                    bookings = bookingRepository.findAllByUser(userId);
+                    bookings = bookingRepository.findAllByUser(userId, pageable);
                 break;
             case "CURRENT":
                 if (isOwner)
-                    bookings = bookingRepository.findAllCurrentBookingsByOwner(userId, now);
+                    bookings = bookingRepository.findAllCurrentBookingsByOwner(userId, now, pageable);
                 else
-                    bookings = bookingRepository.findAllCurrentBookingsByUser(userId, now);
+                    bookings = bookingRepository.findAllCurrentBookingsByUser(userId, now, pageable);
                 break;
             case "FUTURE":
                 if (isOwner)
-                    bookings = bookingRepository.findAllFutureBookingsByOwner(userId, now);
+                    bookings = bookingRepository.findAllFutureBookingsByOwner(userId, now, pageable);
                 else
-                    bookings = bookingRepository.findAllFutureBookingsByUser(userId, now);
+                    bookings = bookingRepository.findAllFutureBookingsByUser(userId, now, pageable);
                 break;
             case "PAST":
                 if (isOwner)
-                    bookings = bookingRepository.findAllPastBookingsByOwner(userId, now);
+                    bookings = bookingRepository.findAllPastBookingsByOwner(userId, now, pageable);
                 else
-                    bookings = bookingRepository.findAllPastBookingsByUser(userId, now);
+                    bookings = bookingRepository.findAllPastBookingsByUser(userId, now, pageable);
                 break;
             case "WAITING":
                 if (isOwner)
-                    bookings = bookingRepository.findAllByItemUserIdAndStatusIsOrderByStartDesc(userId, Booking.Status.WAITING);
+                    bookings = bookingRepository.findAllByItemUserIdAndStatusIsOrderByStartDesc(userId, Booking.Status.WAITING, pageable);
                 else
-                    bookings = bookingRepository.findAllByUserIdIsAndStatusIsOrderByStartDesc(userId, Booking.Status.WAITING);
+                    bookings = bookingRepository.findAllByUserIdIsAndStatusIsOrderByStartDesc(userId, Booking.Status.WAITING, pageable);
                 break;
             case "REJECTED":
                 if (isOwner)
-                    bookings = bookingRepository.findAllByItemUserIdAndStatusIsOrderByStartDesc(userId, Booking.Status.REJECTED);
+                    bookings = bookingRepository.findAllByItemUserIdAndStatusIsOrderByStartDesc(userId, Booking.Status.REJECTED, pageable);
                 else
-                    bookings = bookingRepository.findAllByUserIdIsAndStatusIsOrderByStartDesc(userId, Booking.Status.REJECTED);
+                    bookings = bookingRepository.findAllByUserIdIsAndStatusIsOrderByStartDesc(userId, Booking.Status.REJECTED, pageable);
                 break;
             default:
                 throw new BookingValidationException("Unknown state: UNSUPPORTED_STATUS");

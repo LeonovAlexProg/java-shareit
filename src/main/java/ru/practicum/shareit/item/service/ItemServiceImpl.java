@@ -26,6 +26,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.item.exceptions.ItemAccessRestrictedException;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
@@ -45,6 +46,7 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     @Override
+    @Transactional
     public ItemDto addItem(ItemDto itemDto) {
         User user = userRepository.findById(itemDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(String.format("User id %d not found", itemDto.getUserId())));
@@ -55,6 +57,9 @@ public class ItemServiceImpl implements ItemService {
                     .orElseThrow(() -> new ItemRequestNotFoundException(String.format("Request id %d not found", itemDto.getRequestId())));
 
             item.setRequest(request);
+            request.getItems().add(item);
+
+            requestRepository.save(request);
         }
 
         return ItemDto.of(itemRepository.save(item));
