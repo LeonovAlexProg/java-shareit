@@ -32,7 +32,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-class ItemServiceImplUnitTest {
+class ItemServiceUnitTest {
     @InjectMocks
     ItemServiceImpl itemService;
 

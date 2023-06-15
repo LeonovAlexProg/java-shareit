@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-class BookingServiceImplUnitTest {
+class BookingServiceUnitTest {
     @InjectMocks
     BookingServiceImpl bookingService;
     @Mock
