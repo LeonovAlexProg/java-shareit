@@ -23,11 +23,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public List<UserDto> getAllUsers() {
-        return UserDto.listOf(userRepository.findAll());
-    }
-
-    @Override
     public UserDto createUser(UserDto userDto) {
         User user = User.of(userDto);
 
@@ -37,6 +32,12 @@ public class UserServiceImpl implements UserService {
             throw new EmailExistsException("Email is already taken");
         }
     }
+
+    @Override
+    public List<UserDto> getAllUsers() {
+        return UserDto.listOf(userRepository.findAll());
+    }
+
 
     @Override
     public UserDto getUser(Long userId) {

@@ -99,7 +99,6 @@ class BookingServiceImplUnitTest {
         BookingResponseDto expectedResponseDto;
         BookingResponseDto actualResponseDto;
 
-        expectedResponseDto = BookingResponseDto.of(bookingSaved);
 
         Mockito
                 .when(userRepository.findById(booker.getId()))
@@ -111,9 +110,12 @@ class BookingServiceImplUnitTest {
                 .when(bookingRepository.save(booking))
                 .thenReturn(bookingSaved);
 
+        expectedResponseDto = BookingResponseDto.of(bookingSaved);
         actualResponseDto = bookingService.bookItem(bookingRequestDto);
 
         Assertions.assertEquals(expectedResponseDto, actualResponseDto);
+
+
     }
 
     @Test
