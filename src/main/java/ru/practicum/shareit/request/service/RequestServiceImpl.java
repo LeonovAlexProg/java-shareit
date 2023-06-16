@@ -16,8 +16,10 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class RequestServiceImpl implements RequestService{
                 .created(LocalDateTime.now())
                 .description(itemRequestDto.getDescription())
                 .user(creator)
-                .items(Collections.emptyList())
+                .items(new ArrayList<>()) // TODO поменяль на изменяемый список, не забыть пронать тесты
                 .build();
 
         newRequest = requestRepository.save(newRequest);
@@ -78,11 +80,9 @@ public class RequestServiceImpl implements RequestService{
             pageable = PageRequest.of(page, size, Sort.by("created").descending());
             requests = requestRepository.findRequests(pageable);
 
-            // todo не понимаю как отличить два абсолютно одинаковых запроса, только один в тестах называется ДЛЯ СОЗДАТЕЛЯ ЗАПРОСА
-            // а другой ДЛЯ ПОЛЬЗОВАТЕЛЯ поэтому ставлю костыль
-            if (userId == 1) {
-                return Collections.emptyList();
-            }
+            requests = requests.stream()
+                    .filter(itemRequest -> !itemRequest.getUser().getId().equals(userId))
+                    .collect(Collectors.toList());
         } else {
             requests = requestRepository.findRequests(Sort.by("created").descending());
         }
