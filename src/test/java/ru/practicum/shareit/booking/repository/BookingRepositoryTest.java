@@ -155,7 +155,8 @@ class BookingRepositoryTest {
         bookingRepository.save(booking);
         bookingRepository.save(bookingTwo);
 
-        expectedList = List.of(booking, bookingTwo);
+        expectedList = new ArrayList<>(List.of(booking, bookingTwo));
+        expectedList.sort(Comparator.comparing(Booking::getStart).reversed());
         actualList = bookingRepository.findAllCurrentBookingsByUser(booker.getId(), LocalDateTime.now(), Pageable.unpaged());
 
         Assertions.assertEquals(expectedList, actualList);
@@ -232,7 +233,8 @@ class BookingRepositoryTest {
         bookingRepository.save(booking);
         bookingRepository.save(bookingTwo);
 
-        expectedList = List.of(booking, bookingTwo);
+        expectedList = new ArrayList<>(List.of(booking, bookingTwo));
+        expectedList.sort(Comparator.comparing(Booking::getStart).reversed());
         actualList = bookingRepository.findAllPastBookingsByUser(booker.getId(), LocalDateTime.now(), Pageable.unpaged());
 
         Assertions.assertEquals(expectedList, actualList);

@@ -61,7 +61,7 @@ class ItemControllerTest {
     }
 
     @Test
-    void addItem() throws Exception{
+    void addItem() throws Exception {
         itemRequestDto.setUserId(owner.getId());
 
         Mockito
@@ -157,7 +157,7 @@ class ItemControllerTest {
     }
 
     @Test
-    void postComment() throws Exception{
+    void postComment() throws Exception {
         CommentRequestDto commentRequestDto = CommentRequestDto.builder()
                 .text("text comment")
                 .build();

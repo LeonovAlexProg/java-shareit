@@ -384,7 +384,7 @@ class ItemServiceUnitTest {
                     String text = invocationOnMock.getArgument(0, String.class);
                     if (text.equals("drill")) {
                         return Optional.of(List.of(itemSaved));
-                    } else if (text.isEmpty()){
+                    } else if (text.isEmpty()) {
                         return Optional.of(Collections.emptyList());
                     }
                     return null;

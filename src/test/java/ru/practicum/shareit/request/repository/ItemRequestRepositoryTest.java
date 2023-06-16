@@ -14,6 +14,8 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @DataJpaTest
@@ -56,7 +58,8 @@ class ItemRequestRepositoryTest {
         itemRequestRepository.save(itemRequest);
         itemRequestRepository.save(itemRequestTwo);
 
-        expectedList = List.of(itemRequest, itemRequestTwo);
+        expectedList = new ArrayList<>(List.of(itemRequest, itemRequestTwo));
+        expectedList.sort(Comparator.comparing(ItemRequest::getCreated).reversed());
         actualList = itemRequestRepository.findAllByUserId(requester.getId());
 
         Assertions.assertEquals(expectedList, actualList);

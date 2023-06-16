@@ -26,7 +26,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
-class RequestServiceImplUnitTest {
+class RequestServiceUnitTest {
     @InjectMocks
     RequestServiceImpl requestService;
     @Mock
