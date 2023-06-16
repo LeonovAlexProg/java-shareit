@@ -19,8 +19,9 @@ import ru.practicum.shareit.user.model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,11 +41,10 @@ class BookingControllerTest {
     private BookingRequestDto bookingRequestDto;
     private BookingResponseDto bookingResponseDto;
     private Item item;
-    private LocalDateTime localDateTime;
 
     @BeforeEach
     void setUp() {
-        localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime = LocalDateTime.now();
 
         owner = User.builder()
                 .id(1L)
@@ -99,25 +99,96 @@ class BookingControllerTest {
     }
 
     @Test
-    void acceptOrDeclineBooking() {
-        bookingResponseDto.setStatus("APPROVED");
+    void acceptOrDeclineBooking() throws Exception {
+        BookingResponseDto approvedBooking = BookingResponseDto.builder()
+                .id(1L)
+                .start(bookingRequestDto.getStart())
+                .end(bookingRequestDto.getEnd())
+                .status("APPROVED")
+                .booker(UserDto.of(booker))
+                .item(ItemDto.of(item))
+                .build();
 
         Mockito
                 .when(bookingService.acceptOrDeclineBooking(owner.getId(), bookingResponseDto.getId(), true))
+                .thenReturn(approvedBooking);
+
+        mvc.perform(patch("/bookings/{bookingId}", bookingResponseDto.getId())
+                        .header("X-Sharer-User-Id", owner.getId())
+                        .param("approved", String.valueOf(true)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.status").value("APPROVED"));
+    }
+
+    @Test
+    void getOneBooking() throws Exception {
+        Mockito
+                .when(bookingService.getBooking(bookingResponseDto.getBooker().getId(), bookingResponseDto.getId()))
                 .thenReturn(bookingResponseDto);
 
-
+        mvc.perform(get("/bookings/{bookingId}", bookingResponseDto.getId())
+                        .header("X-Sharer-User-Id", booker.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(bookingResponseDto.getId()))
+                .andExpect(jsonPath("$.status").value(bookingResponseDto.getStatus()));
     }
 
     @Test
-    void getOneBooking() {
+    void getAllUserBookings() throws Exception {
+        List<BookingResponseDto> expectedList;
+
+        BookingResponseDto newBooking = BookingResponseDto.builder()
+                .id(2L)
+                .start(bookingRequestDto.getStart())
+                .end(bookingRequestDto.getEnd())
+                .status("APPROVED")
+                .booker(UserDto.of(booker))
+                .item(ItemDto.of(item))
+                .build();
+
+        expectedList = List.of(bookingResponseDto, newBooking);
+
+        Mockito
+                .when(bookingService.getUserBookings(booker.getId(), "ALL", false, 0, 10))
+                .thenReturn(expectedList);
+
+        mvc.perform(get("/bookings")
+                .header("X-Sharer-User-Id", booker.getId())
+                .param("state", "ALL")
+                .param("from", String.valueOf(0))
+                .param("size", String.valueOf(10)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(expectedList.get(0).getId()))
+                .andExpect(jsonPath("$[1].id").value(expectedList.get(1).getId()));
     }
 
     @Test
-    void getAllUserBookings() {
-    }
+    void getAllOwnerBookings() throws Exception {
+        List<BookingResponseDto> expectedList;
 
-    @Test
-    void getAllOwnerBookings() {
+        BookingResponseDto newBooking = BookingResponseDto.builder()
+                .id(2L)
+                .start(bookingRequestDto.getStart())
+                .end(bookingRequestDto.getEnd())
+                .status("APPROVED")
+                .booker(UserDto.of(booker))
+                .item(ItemDto.of(item))
+                .build();
+
+        expectedList = List.of(bookingResponseDto, newBooking);
+
+        Mockito
+                .when(bookingService.getUserBookings(booker.getId(), "ALL", true, 0, 10))
+                .thenReturn(expectedList);
+
+        mvc.perform(get("/bookings/owner")
+                        .header("X-Sharer-User-Id", booker.getId())
+                        .param("state", "ALL")
+                        .param("from", String.valueOf(0))
+                        .param("size", String.valueOf(10)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(expectedList.get(0).getId()))
+                .andExpect(jsonPath("$[1].id").value(expectedList.get(1).getId()));
     }
 }
