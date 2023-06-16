@@ -27,6 +27,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+
 @ExtendWith(MockitoExtension.class)
 class BookingServiceUnitTest {
     @InjectMocks
@@ -293,7 +296,7 @@ class BookingServiceUnitTest {
     }
 
     @Test
-    void getUserBookings() {
+    void getAllUserBookings() {
         List<BookingResponseDto> expectedList;
         List<BookingResponseDto> actualList;
 
@@ -318,6 +321,156 @@ class BookingServiceUnitTest {
 
         expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
         actualList = bookingService.getUserBookings(booker.getId(), "ALL", false, null, null);
+
+        Assertions.assertEquals(expectedList, actualList);
+    }
+
+    @Test
+    void getCurrentUserBookings() {
+        List<BookingResponseDto> expectedList;
+        List<BookingResponseDto> actualList;
+
+        Mockito
+                .when(userRepository.existsById(owner.getId()))
+                .thenReturn(true);
+        Mockito
+                .when(bookingRepository.findAllCurrentBookingsByOwner(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
+                .thenReturn(List.of(bookingSaved));
+
+        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        actualList = bookingService.getUserBookings(owner.getId(), "CURRENT", true, null, null);
+
+        Assertions.assertEquals(expectedList, actualList);
+
+        Mockito
+                .when(userRepository.existsById(booker.getId()))
+                .thenReturn(true);
+        Mockito
+                .when(bookingRepository.findAllCurrentBookingsByUser(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
+                .thenReturn(List.of(bookingSaved));
+
+        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        actualList = bookingService.getUserBookings(booker.getId(), "CURRENT", false, null, null);
+
+        Assertions.assertEquals(expectedList, actualList);
+    }
+
+    @Test
+    void getFutureUserBookings() {
+        List<BookingResponseDto> expectedList;
+        List<BookingResponseDto> actualList;
+
+        Mockito
+                .when(userRepository.existsById(owner.getId()))
+                .thenReturn(true);
+        Mockito
+                .when(bookingRepository.findAllFutureBookingsByOwner(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
+                .thenReturn(List.of(bookingSaved));
+
+        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        actualList = bookingService.getUserBookings(owner.getId(), "FUTURE", true, null, null);
+
+        Assertions.assertEquals(expectedList, actualList);
+
+        Mockito
+                .when(userRepository.existsById(booker.getId()))
+                .thenReturn(true);
+        Mockito
+                .when(bookingRepository.findAllFutureBookingsByUser(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
+                .thenReturn(List.of(bookingSaved));
+
+        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        actualList = bookingService.getUserBookings(booker.getId(), "FUTURE", false, null, null);
+
+        Assertions.assertEquals(expectedList, actualList);
+    }
+
+    @Test
+    void getPastUserBookings() {
+        List<BookingResponseDto> expectedList;
+        List<BookingResponseDto> actualList;
+
+        Mockito
+                .when(userRepository.existsById(owner.getId()))
+                .thenReturn(true);
+        Mockito
+                .when(bookingRepository.findAllPastBookingsByOwner(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
+                .thenReturn(List.of(bookingSaved));
+
+        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        actualList = bookingService.getUserBookings(owner.getId(), "PAST", true, null, null);
+
+        Assertions.assertEquals(expectedList, actualList);
+
+        Mockito
+                .when(userRepository.existsById(booker.getId()))
+                .thenReturn(true);
+        Mockito
+                .when(bookingRepository.findAllPastBookingsByUser(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
+                .thenReturn(List.of(bookingSaved));
+
+        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        actualList = bookingService.getUserBookings(booker.getId(), "PAST", false, null, null);
+
+        Assertions.assertEquals(expectedList, actualList);
+    }
+
+    @Test
+    void getWaitingUserBookings() {
+        List<BookingResponseDto> expectedList;
+        List<BookingResponseDto> actualList;
+
+        Mockito
+                .when(userRepository.existsById(owner.getId()))
+                .thenReturn(true);
+        Mockito
+                .when(bookingRepository.findAllByItemUserIdAndStatusIsOrderByStartDesc(anyLong(), any(Booking.Status.class), any(Pageable.class)))
+                .thenReturn(List.of(bookingSaved));
+
+        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        actualList = bookingService.getUserBookings(owner.getId(), "WAITING", true, null, null);
+
+        Assertions.assertEquals(expectedList, actualList);
+
+        Mockito
+                .when(userRepository.existsById(booker.getId()))
+                .thenReturn(true);
+        Mockito
+                .when(bookingRepository.findAllByUserIdIsAndStatusIsOrderByStartDesc(anyLong(), any(Booking.Status.class), any(Pageable.class)))
+                .thenReturn(List.of(bookingSaved));
+
+        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        actualList = bookingService.getUserBookings(booker.getId(), "WAITING", false, null, null);
+
+        Assertions.assertEquals(expectedList, actualList);
+    }
+
+    @Test
+    void getRejectedUserBookings() {
+        List<BookingResponseDto> expectedList;
+        List<BookingResponseDto> actualList;
+
+        Mockito
+                .when(userRepository.existsById(owner.getId()))
+                .thenReturn(true);
+        Mockito
+                .when(bookingRepository.findAllByItemUserIdAndStatusIsOrderByStartDesc(anyLong(), any(Booking.Status.class), any(Pageable.class)))
+                .thenReturn(List.of(bookingSaved));
+
+        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        actualList = bookingService.getUserBookings(owner.getId(), "REJECTED", true, null, null);
+
+        Assertions.assertEquals(expectedList, actualList);
+
+        Mockito
+                .when(userRepository.existsById(booker.getId()))
+                .thenReturn(true);
+        Mockito
+                .when(bookingRepository.findAllByUserIdIsAndStatusIsOrderByStartDesc(anyLong(), any(Booking.Status.class), any(Pageable.class)))
+                .thenReturn(List.of(bookingSaved));
+
+        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        actualList = bookingService.getUserBookings(booker.getId(), "REJECTED", false, null, null);
 
         Assertions.assertEquals(expectedList, actualList);
     }
