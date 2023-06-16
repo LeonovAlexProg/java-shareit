@@ -17,7 +17,6 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,7 @@ public class RequestServiceImpl implements RequestService{
                 .created(LocalDateTime.now())
                 .description(itemRequestDto.getDescription())
                 .user(creator)
-                .items(new ArrayList<>()) // TODO поменяль на изменяемый список, не забыть пронать тесты
+                .items(new ArrayList<>())
                 .build();
 
         newRequest = requestRepository.save(newRequest);
