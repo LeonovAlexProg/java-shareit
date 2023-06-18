@@ -10,9 +10,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -68,8 +70,8 @@ class BookingServiceIntegrationTest {
     @Test
     void bookItem() {
         userRepository.save(owner);
-        UserDto bookerDto = UserDto.of(userRepository.save(booker));
-        ItemDto itemDto = ItemDto.of(itemRepository.save(item));
+        UserDto bookerDto = UserMapper.userDtoOf(userRepository.save(booker));
+        ItemDto itemDto = ItemMapper.itemDtoOf(itemRepository.save(item));
 
         BookingResponseDto bookingResponseDto = bookingService.bookItem(bookingDto);
 
@@ -82,9 +84,9 @@ class BookingServiceIntegrationTest {
 
     @Test
     void acceptOrDeclineBooking() {
-        UserDto ownerDto = UserDto.of(userRepository.save(owner));
-        UserDto bookerDto = UserDto.of(userRepository.save(booker));
-        ItemDto itemDto = ItemDto.of(itemRepository.save(item));
+        UserDto ownerDto = UserMapper.userDtoOf(userRepository.save(owner));
+        UserDto bookerDto = UserMapper.userDtoOf(userRepository.save(booker));
+        ItemDto itemDto = ItemMapper.itemDtoOf(itemRepository.save(item));
         BookingResponseDto bookingResponseDto = bookingService.bookItem(bookingDto);
 
         BookingResponseDto acceptedBookingResponseDto = bookingService.acceptOrDeclineBooking(
@@ -99,9 +101,9 @@ class BookingServiceIntegrationTest {
     void getBooking() {
         BookingResponseDto actualBookingResponseDto;
 
-        UserDto ownerDto = UserDto.of(userRepository.save(owner));
-        UserDto bookerDto = UserDto.of(userRepository.save(booker));
-        ItemDto itemDto = ItemDto.of(itemRepository.save(item));
+        UserDto ownerDto = UserMapper.userDtoOf(userRepository.save(owner));
+        UserDto bookerDto = UserMapper.userDtoOf(userRepository.save(booker));
+        ItemDto itemDto = ItemMapper.itemDtoOf(itemRepository.save(item));
         BookingResponseDto bookingResponseDto = bookingService.bookItem(bookingDto);
 
         actualBookingResponseDto = bookingService.getBooking(ownerDto.getId(), bookingResponseDto.getId());
@@ -119,9 +121,9 @@ class BookingServiceIntegrationTest {
     void getUserBookings() {
         List<BookingResponseDto> actualBookingList;
 
-        UserDto ownerDto = UserDto.of(userRepository.save(owner));
-        UserDto bookerDto = UserDto.of(userRepository.save(booker));
-        ItemDto itemDto = ItemDto.of(itemRepository.save(item));
+        UserDto ownerDto = UserMapper.userDtoOf(userRepository.save(owner));
+        UserDto bookerDto = UserMapper.userDtoOf(userRepository.save(booker));
+        ItemDto itemDto = ItemMapper.itemDtoOf(itemRepository.save(item));
         BookingResponseDto bookingResponseDto = bookingService.bookItem(bookingDto);
 
         actualBookingList = bookingService.getUserBookings(

@@ -15,6 +15,7 @@ import ru.practicum.shareit.booking.exceptions.AcceptBookingException;
 import ru.practicum.shareit.booking.exceptions.BookingNotFoundException;
 import ru.practicum.shareit.booking.exceptions.BookingValidationException;
 import ru.practicum.shareit.booking.exceptions.ItemBookingException;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.model.Item;
@@ -113,7 +114,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.save(booking))
                 .thenReturn(bookingSaved);
 
-        expectedResponseDto = BookingResponseDto.of(bookingSaved);
+        expectedResponseDto = BookingMapper.responseDtoOf(bookingSaved);
         actualResponseDto = bookingService.bookItem(bookingRequestDto);
 
         Assertions.assertEquals(expectedResponseDto, actualResponseDto);
@@ -177,7 +178,7 @@ class BookingServiceUnitTest {
 
         actualResponse = bookingService.acceptOrDeclineBooking(owner.getId(), bookingSaved.getId(), true);
         bookingSaved.setStatus(Booking.Status.APPROVED);
-        expectedResponse = BookingResponseDto.of(bookingSaved);
+        expectedResponse = BookingMapper.responseDtoOf(bookingSaved);
 
         Assertions.assertEquals(expectedResponse, actualResponse);
     }
@@ -243,7 +244,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.isBooker(owner.getId(), bookingSaved.getId()))
                 .thenReturn(true);
 
-        expectedResponse = BookingResponseDto.of(bookingSaved);
+        expectedResponse = BookingMapper.responseDtoOf(bookingSaved);
         actualResponse = bookingService.getBooking(owner.getId(), bookingSaved.getId());
 
         Assertions.assertEquals(expectedResponse, actualResponse);
@@ -307,7 +308,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.findAllByOwner(owner.getId(), Pageable.unpaged()))
                 .thenReturn(List.of(bookingSaved));
 
-        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        expectedList = BookingMapper.responseDtoListOf(List.of(bookingSaved));
         actualList = bookingService.getUserBookings(owner.getId(), "ALL", true, null, null);
 
         Assertions.assertEquals(expectedList, actualList);
@@ -319,7 +320,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.findAllByUser(booker.getId(), Pageable.unpaged()))
                 .thenReturn(List.of(bookingSaved));
 
-        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        expectedList = BookingMapper.responseDtoListOf(List.of(bookingSaved));
         actualList = bookingService.getUserBookings(booker.getId(), "ALL", false, null, null);
 
         Assertions.assertEquals(expectedList, actualList);
@@ -337,7 +338,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.findAllCurrentBookingsByOwner(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
                 .thenReturn(List.of(bookingSaved));
 
-        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        expectedList = BookingMapper.responseDtoListOf(List.of(bookingSaved));
         actualList = bookingService.getUserBookings(owner.getId(), "CURRENT", true, null, null);
 
         Assertions.assertEquals(expectedList, actualList);
@@ -349,7 +350,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.findAllCurrentBookingsByUser(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
                 .thenReturn(List.of(bookingSaved));
 
-        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        expectedList = BookingMapper.responseDtoListOf(List.of(bookingSaved));
         actualList = bookingService.getUserBookings(booker.getId(), "CURRENT", false, null, null);
 
         Assertions.assertEquals(expectedList, actualList);
@@ -367,7 +368,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.findAllFutureBookingsByOwner(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
                 .thenReturn(List.of(bookingSaved));
 
-        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        expectedList = BookingMapper.responseDtoListOf(List.of(bookingSaved));
         actualList = bookingService.getUserBookings(owner.getId(), "FUTURE", true, null, null);
 
         Assertions.assertEquals(expectedList, actualList);
@@ -379,7 +380,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.findAllFutureBookingsByUser(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
                 .thenReturn(List.of(bookingSaved));
 
-        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        expectedList = BookingMapper.responseDtoListOf(List.of(bookingSaved));
         actualList = bookingService.getUserBookings(booker.getId(), "FUTURE", false, null, null);
 
         Assertions.assertEquals(expectedList, actualList);
@@ -397,7 +398,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.findAllPastBookingsByOwner(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
                 .thenReturn(List.of(bookingSaved));
 
-        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        expectedList = BookingMapper.responseDtoListOf(List.of(bookingSaved));
         actualList = bookingService.getUserBookings(owner.getId(), "PAST", true, null, null);
 
         Assertions.assertEquals(expectedList, actualList);
@@ -409,7 +410,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.findAllPastBookingsByUser(anyLong(), any(LocalDateTime.class), any(Pageable.class)))
                 .thenReturn(List.of(bookingSaved));
 
-        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        expectedList = BookingMapper.responseDtoListOf(List.of(bookingSaved));
         actualList = bookingService.getUserBookings(booker.getId(), "PAST", false, null, null);
 
         Assertions.assertEquals(expectedList, actualList);
@@ -427,7 +428,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.findAllByItemUserIdAndStatusIsOrderByStartDesc(anyLong(), any(Booking.Status.class), any(Pageable.class)))
                 .thenReturn(List.of(bookingSaved));
 
-        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        expectedList = BookingMapper.responseDtoListOf(List.of(bookingSaved));
         actualList = bookingService.getUserBookings(owner.getId(), "WAITING", true, null, null);
 
         Assertions.assertEquals(expectedList, actualList);
@@ -439,7 +440,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.findAllByUserIdIsAndStatusIsOrderByStartDesc(anyLong(), any(Booking.Status.class), any(Pageable.class)))
                 .thenReturn(List.of(bookingSaved));
 
-        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        expectedList = BookingMapper.responseDtoListOf(List.of(bookingSaved));
         actualList = bookingService.getUserBookings(booker.getId(), "WAITING", false, null, null);
 
         Assertions.assertEquals(expectedList, actualList);
@@ -457,7 +458,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.findAllByItemUserIdAndStatusIsOrderByStartDesc(anyLong(), any(Booking.Status.class), any(Pageable.class)))
                 .thenReturn(List.of(bookingSaved));
 
-        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        expectedList = BookingMapper.responseDtoListOf(List.of(bookingSaved));
         actualList = bookingService.getUserBookings(owner.getId(), "REJECTED", true, null, null);
 
         Assertions.assertEquals(expectedList, actualList);
@@ -469,7 +470,7 @@ class BookingServiceUnitTest {
                 .when(bookingRepository.findAllByUserIdIsAndStatusIsOrderByStartDesc(anyLong(), any(Booking.Status.class), any(Pageable.class)))
                 .thenReturn(List.of(bookingSaved));
 
-        expectedList = BookingResponseDto.listOf(List.of(bookingSaved));
+        expectedList = BookingMapper.responseDtoListOf(List.of(bookingSaved));
         actualList = bookingService.getUserBookings(booker.getId(), "REJECTED", false, null, null);
 
         Assertions.assertEquals(expectedList, actualList);

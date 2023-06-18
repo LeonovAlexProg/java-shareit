@@ -2,10 +2,11 @@ package ru.practicum.shareit.booking.dto;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -35,8 +36,8 @@ class BookingResponseDtoTest {
         expectedDto = BookingResponseDto.builder()
                 .id(1L)
                 .status("WAITING")
-                .booker(UserDto.of(user))
-                .item(ItemDto.of(item))
+                .booker(UserMapper.userDtoOf(user))
+                .item(ItemMapper.itemDtoOf(item))
                 .start(localDateTime.minusDays(1))
                 .end(localDateTime.plusDays(1))
                 .build();
@@ -50,7 +51,7 @@ class BookingResponseDtoTest {
                 .status(Booking.Status.WAITING)
                 .build();
 
-        actualDto = BookingResponseDto.of(booking);
+        actualDto = BookingMapper.responseDtoOf(booking);
 
         Assertions.assertEquals(expectedDto, actualDto);
     }
@@ -63,8 +64,8 @@ class BookingResponseDtoTest {
         BookingResponseDto correctDto = BookingResponseDto.builder()
                 .id(1L)
                 .status("WAITING")
-                .booker(UserDto.of(user))
-                .item(ItemDto.of(item))
+                .booker(UserMapper.userDtoOf(user))
+                .item(ItemMapper.itemDtoOf(item))
                 .start(localDateTime.minusDays(1))
                 .end(localDateTime.plusDays(1))
                 .build();
@@ -79,7 +80,7 @@ class BookingResponseDtoTest {
                 .build();
 
         expectedList = List.of(correctDto, correctDto, correctDto);
-        actualList = BookingResponseDto.listOf(List.of(booking, booking, booking));
+        actualList = BookingMapper.responseDtoListOf(List.of(booking, booking, booking));
 
         Assertions.assertEquals(expectedList, actualList);
     }

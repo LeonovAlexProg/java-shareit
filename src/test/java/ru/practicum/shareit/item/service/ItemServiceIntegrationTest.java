@@ -8,11 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.dto.CommentRequestDto;
 import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.CommentMapper;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
@@ -20,6 +23,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -80,8 +84,8 @@ class ItemServiceIntegrationTest {
     void addItem() {
         ItemDto actualItemDto;
 
-        UserDto ownerDto = UserDto.of(userRepository.save(owner));
-        UserDto requesterDto = UserDto.of(userRepository.save(requester));
+        UserDto ownerDto = UserMapper.userDtoOf(userRepository.save(owner));
+        UserDto requesterDto = UserMapper.userDtoOf(userRepository.save(requester));
         Long itemRequestId = requestRepository.save(request).getId();
         itemDto.setUserId(ownerDto.getId());
         itemDto.setRequestId(itemRequestId);
@@ -156,7 +160,7 @@ class ItemServiceIntegrationTest {
 
         Assertions.assertEquals(itemSaved.getId(), actualItemDto.getId());
         Assertions.assertEquals(itemSaved.getName(), actualItemDto.getName());
-        Assertions.assertEquals(CommentResponseDto.listOf(List.of(commentSaved)), actualItemDto.getComments());
+        Assertions.assertEquals(CommentMapper.listOf(List.of(commentSaved)), actualItemDto.getComments());
     }
 
     @Test
@@ -209,10 +213,10 @@ class ItemServiceIntegrationTest {
                 .user(bookerSaved)
                 .build();
 
-        BookingShortDto lastBookingOneDto = BookingShortDto.of(bookingRepository.save(lastBookingOne));
-        BookingShortDto lastBookingTwoDto = BookingShortDto.of(bookingRepository.save(lastBookingTwo));
-        BookingShortDto nextBookingOneDto = BookingShortDto.of(bookingRepository.save(nextBookingOne));
-        BookingShortDto nextBookingTwoDto = BookingShortDto.of(bookingRepository.save(nextBookingTwo));
+        BookingShortDto lastBookingOneDto = BookingMapper.shortResponseDtoOf(bookingRepository.save(lastBookingOne));
+        BookingShortDto lastBookingTwoDto = BookingMapper.shortResponseDtoOf(bookingRepository.save(lastBookingTwo));
+        BookingShortDto nextBookingOneDto = BookingMapper.shortResponseDtoOf(bookingRepository.save(nextBookingOne));
+        BookingShortDto nextBookingTwoDto = BookingMapper.shortResponseDtoOf(bookingRepository.save(nextBookingTwo));
 
         actualItemDtoList = itemService.getUserItems(ownerSaved.getId());
 
@@ -238,7 +242,7 @@ class ItemServiceIntegrationTest {
 
         Item itemSaved = itemRepository.save(item);
 
-        expectedDtoList = List.of(ItemDto.of(itemSaved));
+        expectedDtoList = List.of(ItemMapper.itemDtoOf(itemSaved));
         actualDtoList = itemService.findItem("drill");
 
         Assertions.assertEquals(expectedDtoList, actualDtoList);

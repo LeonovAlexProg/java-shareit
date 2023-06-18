@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
@@ -48,7 +49,7 @@ class ItemDtoTest {
                 .requestId(itemRequest.getId())
                 .build();
 
-        actualDto = ItemDto.of(item);
+        actualDto = ItemMapper.itemDtoOf(item);
 
         Assertions.assertEquals(expectedDto, actualDto);
     }
@@ -70,7 +71,7 @@ class ItemDtoTest {
                 .build();
 
         expectedList = List.of(correctDto, correctDto, correctDto);
-        actualList = ItemDto.listOf(List.of(item, item, item));
+        actualList = ItemMapper.listOf(List.of(item, item, item));
 
         Assertions.assertEquals(expectedList, actualList);
     }

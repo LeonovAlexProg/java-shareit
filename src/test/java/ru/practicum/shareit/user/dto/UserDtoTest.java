@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.dto;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -23,7 +24,7 @@ class UserDtoTest {
                 .name(user.getName())
                 .email(user.getEmail())
                 .build();
-        actualDto = UserDto.of(user);
+        actualDto = UserMapper.userDtoOf(user);
 
         Assertions.assertEquals(expectedDto, actualDto);
     }
@@ -40,7 +41,7 @@ class UserDtoTest {
                 .build();
 
         expectedList = List.of(correctDto, correctDto, correctDto);
-        actualList = UserDto.listOf(List.of(user, user, user));
+        actualList = UserMapper.userDtoListOf(List.of(user, user, user));
 
         Assertions.assertEquals(expectedList, actualList);
     }

@@ -10,14 +10,14 @@ import ru.practicum.shareit.booking.exceptions.AcceptBookingException;
 import ru.practicum.shareit.booking.exceptions.BookingNotFoundException;
 import ru.practicum.shareit.booking.exceptions.BookingValidationException;
 import ru.practicum.shareit.booking.exceptions.ItemBookingException;
+import ru.practicum.shareit.item.exceptions.CommentValidationException;
+import ru.practicum.shareit.item.exceptions.ItemAccessRestrictedException;
 import ru.practicum.shareit.item.exceptions.ItemExistsException;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.request.exception.ItemRequestNotFoundException;
 import ru.practicum.shareit.request.exception.PaginationDataException;
 import ru.practicum.shareit.user.exceptions.EmailExistsException;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
-import ru.practicum.shareit.item.exceptions.ItemAccessRestrictedException;
-import ru.practicum.shareit.item.exceptions.CommentValidationException;
 
 @RestControllerAdvice
 @Slf4j

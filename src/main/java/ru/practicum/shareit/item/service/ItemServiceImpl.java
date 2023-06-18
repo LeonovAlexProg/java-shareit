@@ -6,14 +6,17 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.dto.BookingShortDto;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.dto.CommentRequestDto;
 import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.item.exceptions.CommentValidationException;
+import ru.practicum.shareit.item.exceptions.ItemAccessRestrictedException;
+import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.item.mapper.CommentMapper;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
@@ -24,7 +27,6 @@ import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.item.exceptions.ItemAccessRestrictedException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -62,7 +64,7 @@ public class ItemServiceImpl implements ItemService {
             requestRepository.save(request);
         }
 
-        return ItemDto.of(itemRepository.save(item));
+        return ItemMapper.itemDtoOf(itemRepository.save(item));
     }
 
     @Override
@@ -78,7 +80,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         copyNonNullProperties(srcItem, trgItem);
-        return ItemDto.of(itemRepository.save(trgItem));
+        return ItemMapper.itemDtoOf(itemRepository.save(trgItem));
     }
 
     @Override
@@ -89,13 +91,13 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new UserNotFoundException(String.format("User id %d not found", userId)));
         List<Comment> comments = commentRepository.findAllByItemId(itemId);
 
-        ItemDto itemDto = ItemDto.of(item);
+        ItemDto itemDto = ItemMapper.itemDtoOf(item);
 
         if (item.getUser().equals(user)) {
             setLastAndNextBookingsForItem(itemDto);
         }
 
-        itemDto.setComments(CommentResponseDto.listOf(comments));
+        itemDto.setComments(CommentMapper.listOf(comments));
 
         return itemDto;
     }
@@ -103,7 +105,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getUserItems(Long userId) {
         if (userRepository.existsById(userId)) {
-            List<ItemDto> itemDtoList = ItemDto.listOf(itemRepository.findItemsByUserId(userId)
+            List<ItemDto> itemDtoList = ItemMapper.listOf(itemRepository.findItemsByUserId(userId)
                     .orElseThrow(() -> new ItemNotFoundException(String.format("User id %d have no any items", userId))));
 
             setLastAndNextBookingsForItemList(itemDtoList);
@@ -119,7 +121,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isEmpty())
             return Collections.emptyList();
 
-        return ItemDto.listOf(itemRepository.findItemsLike(text)
+        return ItemMapper.listOf(itemRepository.findItemsLike(text)
                 .orElseThrow(() -> new ItemNotFoundException(String.format("No items containing %s were found", text))));
     }
 
@@ -140,7 +142,7 @@ public class ItemServiceImpl implements ItemService {
 
             comment = commentRepository.save(comment);
 
-            return CommentResponseDto.of(comment);
+            return CommentMapper.responseDtoOf(comment);
         }
 
         throw new CommentValidationException(String.format("User id %d can not post comments on item id %d", userId, itemId));
@@ -153,9 +155,9 @@ public class ItemServiceImpl implements ItemService {
                 .findNextBooking(itemDto.getId());
 
         if (lastBooking != null) {
-            itemDto.setLastBooking(BookingShortDto.of(lastBooking));
+            itemDto.setLastBooking(BookingMapper.shortResponseDtoOf(lastBooking));
             if (nextBooking != null) {
-                itemDto.setNextBooking(BookingShortDto.of(nextBooking));
+                itemDto.setNextBooking(BookingMapper.shortResponseDtoOf(nextBooking));
             }
         }
     }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exceptions.EmailExistsException;
 import ru.practicum.shareit.user.exceptions.UserNotFoundException;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -27,7 +28,7 @@ public class UserServiceImpl implements UserService {
         User user = User.of(userDto);
 
         try {
-            return UserDto.of(userRepository.save(user));
+            return UserMapper.userDtoOf(userRepository.save(user));
         } catch (Exception e) {
             throw new EmailExistsException("Email is already taken");
         }
@@ -35,13 +36,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return UserDto.listOf(userRepository.findAll());
+        return UserMapper.userDtoListOf(userRepository.findAll());
     }
 
 
     @Override
     public UserDto getUser(Long userId) {
-        return UserDto.of(userRepository.findById(userId)
+        return UserMapper.userDtoOf(userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User id %d not found", userId))));
     }
 
@@ -53,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
         copyNonNullProperties(srcUser, trgUser);
         try {
-            return UserDto.of(userRepository.save(trgUser));
+            return UserMapper.userDtoOf(userRepository.save(trgUser));
         } catch (Exception e) {
             throw new EmailExistsException("Email is already taken");
         }

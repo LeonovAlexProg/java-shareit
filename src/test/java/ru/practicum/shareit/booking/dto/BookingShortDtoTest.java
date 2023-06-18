@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.dto;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -43,7 +44,7 @@ class BookingShortDtoTest {
                 .status(Booking.Status.WAITING)
                 .build();
 
-        actualDto = BookingShortDto.of(booking);
+        actualDto = BookingMapper.shortResponseDtoOf(booking);
 
         Assertions.assertEquals(expectedDto, actualDto);
     }

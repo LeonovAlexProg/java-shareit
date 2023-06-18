@@ -2,7 +2,7 @@ package ru.practicum.shareit.request.mapper;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -10,8 +10,6 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ItemRequestMapperTest {
     LocalDateTime localDateTime = LocalDateTime.now();
@@ -42,7 +40,7 @@ class ItemRequestMapperTest {
 
         expectedDto = ItemRequestDto.builder()
                 .id(itemRequest.getId())
-                .items(List.of(ItemDto.of(item)))
+                .items(List.of(ItemMapper.itemDtoOf(item)))
                 .description(itemRequest.getDescription())
                 .created(localDateTime)
                 .build();
@@ -59,7 +57,7 @@ class ItemRequestMapperTest {
 
         ItemRequestDto correctDto = ItemRequestDto.builder()
                 .id(itemRequest.getId())
-                .items(List.of(ItemDto.of(item)))
+                .items(List.of(ItemMapper.itemDtoOf(item)))
                 .description(itemRequest.getDescription())
                 .created(localDateTime)
                 .build();

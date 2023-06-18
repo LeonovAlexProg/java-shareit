@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.exceptions.AcceptBookingException;
 import ru.practicum.shareit.booking.exceptions.BookingNotFoundException;
 import ru.practicum.shareit.booking.exceptions.BookingValidationException;
 import ru.practicum.shareit.booking.exceptions.ItemBookingException;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.exceptions.ItemNotFoundException;
@@ -53,7 +54,7 @@ public class BookingServiceImpl implements BookingService {
                     .status(Booking.Status.WAITING)
                     .build();
 
-            return BookingResponseDto.of(bookingRepository.save(booking));
+            return BookingMapper.responseDtoOf(bookingRepository.save(booking));
         } else {
             throw new ItemBookingException(String.format("Item id %d is unavailable", item.getId()));
         }
@@ -83,7 +84,7 @@ public class BookingServiceImpl implements BookingService {
             throw new AcceptBookingException("Unable to approve booking");
         }
 
-        return BookingResponseDto.of(booking);
+        return BookingMapper.responseDtoOf(booking);
     }
 
     @Override
@@ -97,7 +98,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BookingNotFoundException(String.format("No booking id %d found for user %d",bookingId, userId));
 
 
-        return BookingResponseDto.of(booking);
+        return BookingMapper.responseDtoOf(booking);
     }
 
     @Override
@@ -162,6 +163,6 @@ public class BookingServiceImpl implements BookingService {
                 throw new BookingValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
 
-        return BookingResponseDto.listOf(bookings);
+        return BookingMapper.responseDtoListOf(bookings);
     }
 }

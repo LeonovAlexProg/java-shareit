@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -51,7 +52,7 @@ class UserServiceIntegrationTest {
         Assertions.assertTrue(persistedUser.isPresent());
 
         expectedDto = userSaved;
-        actualDto = UserDto.of(persistedUser.get());
+        actualDto = UserMapper.userDtoOf(persistedUser.get());
 
         Assertions.assertEquals(expectedDto, actualDto);
     }
@@ -74,7 +75,7 @@ class UserServiceIntegrationTest {
         User userSavedTwo = userRepository.save(userTwo);
         User userSavedThree = userRepository.save(userThree);
 
-        expectedList = UserDto.listOf(List.of(userSavedOne, userSavedTwo, userSavedThree));
+        expectedList = UserMapper.userDtoListOf(List.of(userSavedOne, userSavedTwo, userSavedThree));
         actualList = userService.getAllUsers();
 
         Assertions.assertEquals(expectedList, actualList);
@@ -87,7 +88,7 @@ class UserServiceIntegrationTest {
 
         User userSaved = userRepository.save(user);
 
-        expectedDto = UserDto.of(userSaved);
+        expectedDto = UserMapper.userDtoOf(userSaved);
         actualDto = userService.getUser(userSaved.getId());
 
         Assertions.assertEquals(expectedDto, actualDto);
@@ -118,7 +119,7 @@ class UserServiceIntegrationTest {
 
         User userSaved = userRepository.save(user);
 
-        expectedDto = UserDto.of(userSaved);
+        expectedDto = UserMapper.userDtoOf(userSaved);
         actualDto = userService.getUser(userSaved.getId());
 
         Assertions.assertEquals(expectedDto, actualDto);

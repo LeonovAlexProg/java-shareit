@@ -6,13 +6,11 @@ import org.springframework.lang.Nullable;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.item.constraints.ItemCreateConstraint;
 import ru.practicum.shareit.item.constraints.ItemIdConstraint;
-import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -38,24 +36,4 @@ public class ItemDto {
     private List<CommentResponseDto> comments;
     @Nullable
     private Long requestId;
-
-    public static ItemDto of(Item item) {
-        ItemDto dto = ItemDto.builder()
-                .id(item.getId())
-                .userId(item.getUser().getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getIsAvailable())
-                .build();
-
-        if (item.getRequest() != null) {
-            dto.setRequestId(item.getRequest().getId());
-        }
-
-        return dto;
-    }
-
-    public static List<ItemDto> listOf(List<Item> items) {
-        return items.stream().map(ItemDto::of).collect(Collectors.toList());
-    }
 }

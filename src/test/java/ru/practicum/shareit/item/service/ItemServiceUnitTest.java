@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.practicum.shareit.booking.dto.BookingShortDto;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.dto.CommentRequestDto;
@@ -186,8 +186,8 @@ class ItemServiceUnitTest {
                 .description("Shovel for digging what is digging")
                 .userId(1L)
                 .available(true)
-                .lastBooking(BookingShortDto.of(lastBooking))
-                .nextBooking(BookingShortDto.of(nextBooking))
+                .lastBooking(BookingMapper.shortResponseDtoOf(lastBooking))
+                .nextBooking(BookingMapper.shortResponseDtoOf(nextBooking))
                 .build();
 
         comment = Comment.builder()

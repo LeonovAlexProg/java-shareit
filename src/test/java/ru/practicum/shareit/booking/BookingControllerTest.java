@@ -12,9 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.nio.charset.StandardCharsets;
@@ -77,8 +77,8 @@ class BookingControllerTest {
                 .start(bookingRequestDto.getStart())
                 .end(bookingRequestDto.getEnd())
                 .status("WAITING")
-                .booker(UserDto.of(booker))
-                .item(ItemDto.of(item))
+                .booker(UserMapper.userDtoOf(booker))
+                .item(ItemMapper.itemDtoOf(item))
                 .build();
     }
 
@@ -105,8 +105,8 @@ class BookingControllerTest {
                 .start(bookingRequestDto.getStart())
                 .end(bookingRequestDto.getEnd())
                 .status("APPROVED")
-                .booker(UserDto.of(booker))
-                .item(ItemDto.of(item))
+                .booker(UserMapper.userDtoOf(booker))
+                .item(ItemMapper.itemDtoOf(item))
                 .build();
 
         Mockito
@@ -143,8 +143,8 @@ class BookingControllerTest {
                 .start(bookingRequestDto.getStart())
                 .end(bookingRequestDto.getEnd())
                 .status("APPROVED")
-                .booker(UserDto.of(booker))
-                .item(ItemDto.of(item))
+                .booker(UserMapper.userDtoOf(booker))
+                .item(ItemMapper.itemDtoOf(item))
                 .build();
 
         expectedList = List.of(bookingResponseDto, newBooking);
@@ -172,8 +172,8 @@ class BookingControllerTest {
                 .start(bookingRequestDto.getStart())
                 .end(bookingRequestDto.getEnd())
                 .status("APPROVED")
-                .booker(UserDto.of(booker))
-                .item(ItemDto.of(item))
+                .booker(UserMapper.userDtoOf(booker))
+                .item(ItemMapper.itemDtoOf(item))
                 .build();
 
         expectedList = List.of(bookingResponseDto, newBooking);
