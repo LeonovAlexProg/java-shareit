@@ -360,12 +360,15 @@ class ItemServiceUnitTest {
         Mockito
                 .when(itemRepository.findItemsByUserId(owner.getId()))
                 .thenReturn(Optional.of(List.of(itemSaved)));
+//        Mockito
+//                .when(bookingRepository.findLastBooking(itemDtoWithBookings.getId()))
+//                .thenReturn(lastBooking);
+//        Mockito
+//                .when(bookingRepository.findNextBooking(itemDtoWithBookings.getId()))
+//                .thenReturn(nextBooking);
         Mockito
-                .when(bookingRepository.findLastBooking(itemDtoWithBookings.getId()))
-                .thenReturn(lastBooking);
-        Mockito
-                .when(bookingRepository.findNextBooking(itemDtoWithBookings.getId()))
-                .thenReturn(nextBooking);
+                .when(bookingRepository.findAllByItemsId(List.of(itemSaved.getId())))
+                .thenReturn(List.of(lastBooking, nextBooking));
 
         expectedList = List.of(itemDtoWithBookings);
         actualList = itemService.getUserItems(owner.getId());

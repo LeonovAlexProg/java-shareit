@@ -30,10 +30,8 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -103,15 +101,27 @@ public class ItemServiceImpl implements ItemService {
         return itemDto;
     }
 
+//    @Override
+//    public List<ItemDto> getUserItems(Long userId) {
+//        if (userRepository.existsById(userId)) {
+//            List<ItemDto> itemDtoList = ItemMapper.listOf(itemRepository.findItemsByUserId(userId)
+//                    .orElseThrow(() -> new ItemNotFoundException(String.format("User id %d have no any items", userId))));
+//
+//            setLastAndNextBookingsForItemList(itemDtoList);
+//
+//            return itemDtoList;
+//        } else {
+//            throw new UserNotFoundException(String.format("User id %d not found", userId));
+//        }
+//    }
+
     @Override
     public List<ItemDto> getUserItems(Long userId) {
         if (userRepository.existsById(userId)) {
-            List<ItemDto> itemDtoList = ItemMapper.listOf(itemRepository.findItemsByUserId(userId)
-                    .orElseThrow(() -> new ItemNotFoundException(String.format("User id %d have no any items", userId))));
+            List<Item> items = itemRepository.findItemsByUserId(userId)
+                    .orElseThrow(() -> new ItemNotFoundException(String.format("No items found for user $d", userId)));
 
-            setLastAndNextBookingsForItemList(itemDtoList);
-
-            return itemDtoList;
+            return setLastAndNextBookingsForItemList(items);
         } else {
             throw new UserNotFoundException(String.format("User id %d not found", userId));
         }
@@ -164,8 +174,49 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private void setLastAndNextBookingsForItemList(List<ItemDto> itemDtoList) {
-        itemDtoList.forEach(this::setLastAndNextBookingsForItem);
+//    private void setLastAndNextBookingsForItemList(List<ItemDto> itemDtoList) {
+//        itemDtoList.forEach(this::setLastAndNextBookingsForItem);
+//    }
+
+    private List<ItemDto> setLastAndNextBookingsForItemList(List<Item> items) {
+        List<Long> itemsId = items.stream().map(Item::getId).collect(Collectors.toList());
+        List<Booking> bookings = bookingRepository.findAllByItemsId(itemsId);
+
+        Map<Long, List<Booking>> mappedBookings = bookings.stream().collect(Collectors.groupingBy(
+                booking -> booking.getItem().getId()
+        ));
+
+        List<ItemDto> itemsDto = ItemMapper.listOf(items);
+
+        if (!mappedBookings.isEmpty()) {
+            itemsDto.forEach(itemDto -> setLastAndNextBookingsForItem(itemDto, mappedBookings));
+        }
+
+        return itemsDto;
+    }
+
+    private void setLastAndNextBookingsForItem(ItemDto itemDto, Map<Long, List<Booking>> mappedBookings) {
+        LocalDateTime now = LocalDateTime.now();
+
+        Booking lastBooking = null;
+        Booking nextBooking = null;
+
+        if (mappedBookings.containsKey(itemDto.getId())) {
+            lastBooking = mappedBookings.get(itemDto.getId()).stream()
+                    .sorted(Comparator.comparing(Booking::getStart).reversed())
+                    .dropWhile(booking -> booking.getStart().isAfter(now))
+                    .findFirst()
+                    .orElse(null);
+            nextBooking = mappedBookings.get(itemDto.getId()).stream()
+                    .dropWhile(booking -> booking.getStart().isBefore(now))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        if (lastBooking != null)
+            itemDto.setLastBooking(BookingMapper.shortResponseDtoOf(lastBooking));
+        if (nextBooking != null)
+            itemDto.setNextBooking(BookingMapper.shortResponseDtoOf(nextBooking));
     }
 
     private static void copyNonNullProperties(Object src, Object target) {

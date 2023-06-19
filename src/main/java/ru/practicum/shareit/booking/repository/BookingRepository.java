@@ -97,4 +97,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "order by b.start_time asc " +
             "limit 1", nativeQuery = true)
     Booking findNextBooking(long itemId);
+
+    @Query(value = "select b from Booking as b " +
+            "join b.item as i " +
+            "where i.id in ?1 " +
+            "order by b.start asc")
+    List<Booking> findAllByItemsId(List<Long> itemsId);
 }
