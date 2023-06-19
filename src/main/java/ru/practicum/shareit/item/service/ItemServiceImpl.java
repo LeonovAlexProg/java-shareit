@@ -68,6 +68,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto updateItem(ItemDto itemDto) {
         Item srcItem = Item.of(itemDto);
         Item trgItem = itemRepository.findById(itemDto.getId())
@@ -126,6 +127,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public CommentResponseDto postComment(Long userId, Long itemId, CommentRequestDto commentRequestDto) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException(String.format("Item id %d not found", itemId)));

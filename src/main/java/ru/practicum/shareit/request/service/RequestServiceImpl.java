@@ -15,6 +15,7 @@ import ru.practicum.shareit.user.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class RequestServiceImpl implements RequestService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public ItemRequestDto addNewRequest(long userId, ItemRequestDto itemRequestDto) {
         User creator = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User id %d not found", userId)));
