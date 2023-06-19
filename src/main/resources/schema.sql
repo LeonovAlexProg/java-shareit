@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS items (
     name VARCHAR(30),
     description VARCHAR(255),
     is_available BOOLEAN,
+    request_id  BIGINT,
     CONSTRAINT fk_owner_id_to_user
     FOREIGN KEY (owner_id) REFERENCES users (id)
 );
@@ -39,3 +40,19 @@ CREATE TABLE IF NOT EXISTS comments (
     CONSTRAINT fk_comments_user_id_to_user
     FOREIGN KEY (author_id) REFERENCES users (id)
 );
+
+CREATE TABLE IF NOT EXISTS requests (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    description VARCHAR(255),
+    created DATETIME,
+    creator_id BIGINT,
+    response_id BIGINT,
+    CONSTRAINT fk_item_requests_response_id_to_item_id
+    FOREIGN KEY (response_id) REFERENCES items (id),
+    CONSTRAINT fk_item_requests_creator_to_user_id
+    FOREIGN KEY (creator_id) REFERENCES users (id)
+);
+
+ALTER TABLE items
+ADD CONSTRAINT fk_request_id_to_item_request
+FOREIGN KEY (request_id) REFERENCES requests (id);
