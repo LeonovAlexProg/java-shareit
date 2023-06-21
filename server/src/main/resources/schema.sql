@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS items (
 
 CREATE TABLE IF NOT EXISTS bookings (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    start_time DATETIME,
-    end_time DATETIME,
+    start_time TIMESTAMP,
+    end_time TIMESTAMP,
     status VARCHAR(30),
     user_id BIGINT,
     item_id BIGINT,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS comments (
     text VARCHAR(255),
     item_id BIGINT,
     author_id BIGINT,
-    created DATETIME,
+    created TIMESTAMP,
     CONSTRAINT fk_comments_item_id_to_item
     FOREIGN KEY (item_id) REFERENCES items (id),
     CONSTRAINT fk_comments_user_id_to_user
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS comments (
 CREATE TABLE IF NOT EXISTS requests (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     description VARCHAR(255),
-    created DATETIME,
+    created TIMESTAMP,
     creator_id BIGINT,
     response_id BIGINT,
     CONSTRAINT fk_item_requests_response_id_to_item_id

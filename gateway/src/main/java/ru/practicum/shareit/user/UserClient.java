@@ -6,7 +6,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -27,5 +26,21 @@ public class UserClient extends BaseClient {
 
     public ResponseEntity<Object> newUser(UserDto userDto) {
         return post("", userDto);
+    }
+
+    public ResponseEntity<Object> getUser(long userId) {
+        return get("/" + userId);
+    }
+
+    public ResponseEntity<Object> patchUser(long userId, UserDto userDto) {
+        return patch("/" + userId, userDto);
+    }
+
+    public ResponseEntity<Object> deleteUser(long userId) {
+        return delete("/" + userId);
+    }
+
+    public ResponseEntity<Object> getAllUsers() {
+        return get("");
     }
 }
