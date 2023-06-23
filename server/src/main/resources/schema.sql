@@ -54,5 +54,8 @@ CREATE TABLE IF NOT EXISTS requests (
 );
 
 ALTER TABLE items
+    DROP CONSTRAINT IF EXISTS fk_request_id_to_item_request;
+
+ALTER TABLE items
 ADD CONSTRAINT fk_request_id_to_item_request
 FOREIGN KEY (request_id) REFERENCES requests (id);
