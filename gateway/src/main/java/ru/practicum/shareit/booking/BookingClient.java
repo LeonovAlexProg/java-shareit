@@ -60,7 +60,7 @@ public class BookingClient extends BaseClient {
             parameters = Map.of(
                     "state", state
             );
-        } else if (size == null){
+        } else if (size == null) {
             parameters = Map.of(
                     "state", state,
                     "from", from

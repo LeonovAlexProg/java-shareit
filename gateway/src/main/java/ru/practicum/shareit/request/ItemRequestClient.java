@@ -50,7 +50,7 @@ public class ItemRequestClient extends BaseClient {
             parameters = Map.of(
                     "size", size
             );
-        } else if (from != null){
+        } else if (from != null) {
             parameters = Map.of(
                     "from", from
             );
