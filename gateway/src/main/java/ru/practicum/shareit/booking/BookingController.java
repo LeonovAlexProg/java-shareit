@@ -2,19 +2,14 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
-import ru.practicum.shareit.booking.dto.BookingResponseDto;
-
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
-import java.util.List;
 
 @Controller
 @RequestMapping(path = "/bookings")
@@ -53,8 +48,8 @@ public class BookingController {
     @GetMapping()
     public ResponseEntity<Object> getAllUserBookings(@RequestHeader(name = "X-Sharer-User-id") long userId,
                                                        @RequestParam(defaultValue = "ALL") String state,
-                                                       @RequestParam(required = false) Integer from,
-                                                       @RequestParam(required = false) Integer size) {
+                                                       @Positive @RequestParam(required = false) Integer from,
+                                                       @Positive @RequestParam(required = false) Integer size) {
         log.info("Get all user bookings state {} user id {} from {} size {}", state, userId, from, size);
         return bookingClient.getUserBookings(userId, state, from, size, false);
     }
@@ -62,8 +57,8 @@ public class BookingController {
     @GetMapping("/owner")
     public ResponseEntity<Object> getAllOwnerBookings(@RequestHeader(name = "X-Sharer-User-id") long userId,
                                                         @RequestParam(defaultValue = "ALL") String state,
-                                                        @RequestParam(required = false) Integer from,
-                                                        @RequestParam(required = false) Integer size) {
+                                                        @Positive @RequestParam(required = false) Integer from,
+                                                        @Positive @RequestParam(required = false) Integer size) {
         log.info("Get all owner bookings state {} user id {} from {} size {}", state, userId, from, size);
         return bookingClient.getUserBookings(userId, state, from, size, true);
     }

@@ -6,15 +6,10 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
-import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.client.BaseClient;
 
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -77,15 +72,15 @@ public class BookingClient extends BaseClient {
             );
         }
 
-        if (parameters.containsKey(state) && parameters.containsKey(String.valueOf(from)) && parameters.containsKey(String.valueOf(size))) {
+        if (parameters.containsKey("state") && parameters.containsKey("from") && parameters.containsKey("size")) {
 
             return get(ownerPath + "?state={state}&from={from}&size={size}", userId, parameters);
 
-        } else if (!parameters.containsKey(String.valueOf(from)) && !parameters.containsKey(String.valueOf(size))) {
+        } else if (!parameters.containsKey("from") && !parameters.containsKey("size")) {
 
             return get(ownerPath + "?state={state}", userId, parameters);
 
-        } else if (!parameters.containsKey(String.valueOf(size))) {
+        } else if (!parameters.containsKey("size")) {
 
             return get(ownerPath + "?state={state}&from={from}", userId, parameters);
 
