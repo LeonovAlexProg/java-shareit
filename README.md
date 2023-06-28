@@ -123,7 +123,7 @@ _Далее описаны пункты для запуска проекта_
 <!-- USAGE EXAMPLES -->
 ## Использование
 
-_Postman-коллекция с примерами запросов - [Ссылка]([https://example.com](https://github.com/yandex-praktikum/java-shareit/blob/add-docker/postman/sprint.json))_
+_Postman-коллекция с примерами запросов - [Ссылка](https://github.com/yandex-praktikum/java-shareit/blob/add-docker/postman/sprint.json)_
 
 <p align="right">(<a href="#readme-top">к заглавию</a>)</p>
 
