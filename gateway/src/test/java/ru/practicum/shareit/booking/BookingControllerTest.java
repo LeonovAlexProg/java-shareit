@@ -43,7 +43,7 @@ class BookingControllerTest {
     private BookingResponseDto bookingResponseDto;
 
     @BeforeEach
-    void setUp() throws JsonProcessingException {
+    void setUp() {
         LocalDateTime localDateTime = LocalDateTime.now();
 
         bookerDto = UserDto.builder()
